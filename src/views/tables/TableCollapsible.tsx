@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,27 +20,9 @@ import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import productApi from '../../api/product-api'
 
-const createData = (name: string, calories: number) => {
-  return {
-    name,
-    calories,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1
-      }
-    ]
-  }
-}
-
-const Row = (props: { row: ReturnType<typeof createData> }) => {
+const Row = (props: { row: IProductTable }) => {
   // ** Props
   const { row } = props
 
@@ -58,7 +40,12 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
         <TableCell component='th' scope='row'>
           {row.name}
         </TableCell>
-        <TableCell align='right'>{row.calories}</TableCell>
+        <TableCell>{row.brand[0].name}</TableCell>
+        <TableCell align='right' sx={{ '* + *': { ml: 2 } }}>
+          {row.cagetories.map(category => (
+            <Chip key={category._id} label={category.name} />
+          ))}
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell colSpan={6} sx={{ py: '0 !important' }}>
@@ -78,13 +65,14 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map(historyRow => (
-                    <TableRow key={historyRow.date}>
+                  {row.productItems.map(item => (
+                    <TableRow key={item._id}>
                       <TableCell component='th' scope='row' sx={{ '* + *': { ml: 2 } }}>
-                        <Chip label='sua rua mat' />
-                        <Chip label='tay trang' />
+                        {item.productConfigurations.map(variant => (
+                          <Chip key={variant._id} label={variant.value} />
+                        ))}
                       </TableCell>
-                      <TableCell>{380000}</TableCell>
+                      <TableCell>{item.price}</TableCell>
                       <TableCell align='right'>{100}</TableCell>
                       <TableCell align='right'>{'10%'}</TableCell>
                       <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
@@ -107,15 +95,16 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
   )
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159),
-  createData('Ice cream sandwich', 237),
-  createData('Eclair', 262),
-  createData('Cupcake', 305),
-  createData('Gingerbread', 356)
-]
-
 const TableCollapsible = () => {
+  const [products, setProducts] = useState<IProductTable[]>()
+
+  useEffect(() => {
+    productApi
+      .getProductTable()
+      .then(data => setProducts(data.data.data))
+      .catch(error => console.log('error: ', error))
+  }, [])
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label='Products'>
@@ -123,14 +112,11 @@ const TableCollapsible = () => {
           <TableRow>
             <TableCell />
             <TableCell>Name</TableCell>
+            <TableCell>Brand</TableCell>
             <TableCell align='right'>Category</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          {rows.map(row => (
-            <Row key={row.name} row={row} />
-          ))}
-        </TableBody>
+        <TableBody>{products && products.map(product => <Row key={product._id} row={product} />)}</TableBody>
       </Table>
     </TableContainer>
   )
