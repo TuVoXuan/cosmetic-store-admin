@@ -13,19 +13,18 @@ import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import TableContainer from '@mui/material/TableContainer'
+import { Chip, Fab } from '@mui/material'
 
 // ** Icons Imports
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 
-const createData = (name: string, calories: number, fat: number, carbs: number, protein: number, price: number) => {
+const createData = (name: string, calories: number) => {
   return {
     name,
     calories,
-    fat,
-    carbs,
-    protein,
-    price,
     history: [
       {
         date: '2020-01-05',
@@ -60,35 +59,42 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
           {row.name}
         </TableCell>
         <TableCell align='right'>{row.calories}</TableCell>
-        <TableCell align='right'>{row.fat}</TableCell>
-        <TableCell align='right'>{row.carbs}</TableCell>
-        <TableCell align='right'>{row.protein}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell colSpan={6} sx={{ py: '0 !important' }}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ m: 2 }}>
               <Typography variant='h6' gutterBottom component='div'>
-                History
+                Product items
               </Typography>
               <Table size='small' aria-label='purchases'>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align='right'>Amount</TableCell>
-                    <TableCell align='right'>Total price ($)</TableCell>
+                    <TableCell>Variations</TableCell>
+                    <TableCell>Price</TableCell>
+                    <TableCell align='right'>Quantity</TableCell>
+                    <TableCell align='right'>Sale</TableCell>
+                    <TableCell align='right'>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.history.map(historyRow => (
                     <TableRow key={historyRow.date}>
-                      <TableCell component='th' scope='row'>
-                        {historyRow.date}
+                      <TableCell component='th' scope='row' sx={{ '* + *': { ml: 2 } }}>
+                        <Chip label='sua rua mat' />
+                        <Chip label='tay trang' />
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align='right'>{historyRow.amount}</TableCell>
-                      <TableCell align='right'>{Math.round(historyRow.amount * row.price * 100) / 100}</TableCell>
+                      <TableCell>{380000}</TableCell>
+                      <TableCell align='right'>{100}</TableCell>
+                      <TableCell align='right'>{'10%'}</TableCell>
+                      <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
+                        <Fab color='primary' size='small' aria-label='edit'>
+                          <EditIcon />
+                        </Fab>
+                        <Fab color='error' size='small' aria-label='delete'>
+                          <DeleteIcon />
+                        </Fab>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -102,25 +108,22 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
 }
 
 const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5)
+  createData('Frozen yoghurt', 159),
+  createData('Ice cream sandwich', 237),
+  createData('Eclair', 262),
+  createData('Cupcake', 305),
+  createData('Gingerbread', 356)
 ]
 
 const TableCollapsible = () => {
   return (
     <TableContainer component={Paper}>
-      <Table aria-label='collapsible table'>
+      <Table aria-label='Products'>
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align='right'>Calories</TableCell>
-            <TableCell align='right'>Fat (g)</TableCell>
-            <TableCell align='right'>Carbs (g)</TableCell>
-            <TableCell align='right'>Protein (g)</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell align='right'>Category</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
