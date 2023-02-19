@@ -15,8 +15,5 @@ declare interface INameTranslateRes {
 
 declare interface IVariationGroup {
   variationName: string
-  variationOptions: {
-    _id: string
-    value: ITranslate[]
-  }[]
+  variationOptions: IOption[]
 }

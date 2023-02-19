@@ -1,5 +1,5 @@
 declare interface IVariationOptionsRes {
-  variationName: {
+  variation: {
     _id: string
     name: ITranslate[]
   }
