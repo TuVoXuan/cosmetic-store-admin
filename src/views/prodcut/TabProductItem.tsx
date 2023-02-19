@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ElementType, ChangeEvent, Fragment } from 'react'
+import { useState, ElementType, ChangeEvent, Fragment, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -12,6 +12,9 @@ import Button, { ButtonProps } from '@mui/material/Button'
 
 // ** Icons Imports
 import { Autocomplete, CardHeader, FormLabel, InputAdornment } from '@mui/material'
+import { Controller, useForm } from 'react-hook-form'
+import productApi from '../../api/product-api'
+import variationApi from '../../api/variation-api'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -111,6 +114,7 @@ const TabProductItem = () => {
             }
           }
         }
+
         return option
       })
 
@@ -298,6 +302,7 @@ const TabProductItem = () => {
                     onChange={(e, value) => {
                       onChange(value)
                       handleGetVariationOptions()
+
                       return value
                     }}
                   />
@@ -324,6 +329,7 @@ const TabProductItem = () => {
                       onChange={(e, value) => {
                         onChange(value)
                         handleGetVariationOptions()
+
                         return value
                       }}
                     />
