@@ -15,6 +15,9 @@ import { Autocomplete, CardHeader, FormLabel, InputAdornment } from '@mui/materi
 import { Controller, useForm } from 'react-hook-form'
 import productApi from '../../api/product-api'
 import variationApi from '../../api/variation-api'
+import { toast } from 'react-hot-toast'
+import { useAppDispatch } from '../../store/configureStore'
+import { addProductItem } from '../../redux/reducers/product-slice'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -45,6 +48,7 @@ interface FormValue {
   thumbnail: any
   images: any
   price: number
+  quantity: number
   [index: string]: any
 }
 
@@ -57,6 +61,9 @@ const TabProductItem = () => {
   const [productNames, setProductNames] = useState<IProductNameOption[]>([])
   const [variationsGroup, setVariationsGroup] = useState<IVariationGroup[]>([])
 
+  // ** Redux Toolkit
+  const dispatch = useAppDispatch()
+
   // ** react-hook-form
   const {
     register,
@@ -64,15 +71,12 @@ const TabProductItem = () => {
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
-    watch
+    getValues
   } = useForm<FormValue>({
     defaultValues: {
       product: undefined
     }
   })
-
-  const watchProduct = watch('product')
 
   const onChangeThumbnail = (file: ChangeEvent) => {
     const { files } = file.target as HTMLInputElement
@@ -163,19 +167,39 @@ const TabProductItem = () => {
   }
 
   const onSubmit = (data: any) => {
-    console.log('data: ', data)
+    const formData = new FormData()
+    formData.append('thumbnail', thumbnailFile as File)
+
+    formData.append('productId', data.product.value)
+
+    formData.append('price', data.price)
+
+    formData.append('quantity', data.quantity)
+
+    for (let file of imgFiles) {
+      formData.append('images', file)
+    }
+
     variationsGroup.forEach(element => {
-      console.log('data[element.variationName]: ', data[element.variationName])
+      formData.append('productConfiguration', data[element.variationName].value)
+    })
+
+    const res = productApi.createProductItem(formData)
+
+    res.then(res => {
+      dispatch(addProductItem(res.data.data))
+    })
+
+    toast.promise(res, {
+      loading: 'Creating new product item ...',
+      success: 'Create product item success',
+      error: err => (err as IResponseError).error
     })
   }
 
   useEffect(() => {
     handleGetProductNames()
   }, [])
-
-  useEffect(() => {
-    setVariationsGroup([])
-  }, [watchProduct])
 
   return (
     <Fragment>
@@ -278,6 +302,28 @@ const TabProductItem = () => {
                     InputProps={{
                       startAdornment: <InputAdornment position='start'>VND</InputAdornment>
                     }}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name={'quantity'}
+                defaultValue={0}
+                rules={{
+                  required: { value: true, message: 'Quantity is required' },
+                  min: { value: 1, message: 'Price must be greate than 1' }
+                }}
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <TextField
+                    fullWidth
+                    error={invalid}
+                    helperText={error?.message}
+                    label='Quantity'
                     value={value}
                     onChange={onChange}
                   />

@@ -4,6 +4,10 @@ import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 
+// ** Redux Toolkit
+import { store } from '../store/configureStore'
+import { Provider } from 'react-redux'
+
 // ** Loader Import
 import NProgress from 'nprogress'
 
@@ -29,6 +33,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import { Toaster } from 'react-hot-toast'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -70,13 +75,16 @@ const App = (props: ExtendedAppProps) => {
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 
-      <SettingsProvider>
-        <SettingsConsumer>
-          {({ settings }) => {
-            return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
-          }}
-        </SettingsConsumer>
-      </SettingsProvider>
+      <Provider store={store}>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => {
+              return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+            }}
+          </SettingsConsumer>
+          <Toaster />
+        </SettingsProvider>
+      </Provider>
     </CacheProvider>
   )
 }

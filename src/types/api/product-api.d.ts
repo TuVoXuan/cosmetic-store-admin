@@ -16,17 +16,20 @@ declare interface IProductNameOption extends IOption {
   variations: string[]
 }
 
+declare interface IProductItemTable {
+  _id: string
+  price: number
+  quantity: number
+  productConfigurations: {
+    _id: string
+    value: string
+  }[]
+}
+
 declare interface IProductTable {
   _id: string
   name: string
-  productItems: {
-    _id: string
-    price: number
-    productConfigurations: {
-      _id: string
-      value: string
-    }[]
-  }[]
+  productItems: IProductItemTable[]
   brand: {
     _id: string
     name: string
@@ -35,4 +38,14 @@ declare interface IProductTable {
     _id: string
     name: string
   }[]
+}
+
+declare interface IDeleteProductItemRes {
+  productId: string
+  productItemId: string
+}
+
+declare interface ICreateProductItemRes {
+  productId: string
+  productItem: IProductItemTable
 }
