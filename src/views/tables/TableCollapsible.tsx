@@ -13,21 +13,70 @@ import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import TableContainer from '@mui/material/TableContainer'
-import { Chip, Fab } from '@mui/material'
+import { Button, Chip } from '@mui/material'
+import productApi from '../../api/product-api'
+import toast from 'react-hot-toast'
 
 // ** Icons Imports
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import productApi from '../../api/product-api'
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded'
+import { removeProductItem, selectProducts } from '../../redux/reducers/product-slice'
+import { getProducts } from '../../redux/actions/product-action'
+import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 
 const Row = (props: { row: IProductTable }) => {
   // ** Props
   const { row } = props
+  const dispatch = useAppDispatch()
 
   // ** State
   const [open, setOpen] = useState<boolean>(false)
+
+  const handeDeleteProductItem = (productId: string, itemId: string) => {
+    const deleteItem = productApi.deleteProductItem(productId, itemId)
+    deleteItem.then(res => {
+      dispatch(removeProductItem(res.data.data))
+    })
+    toast.promise(deleteItem, {
+      loading: 'Deleting product item',
+      success: 'Delete product item success',
+      error: err => (err as IResponseError).error
+    })
+  }
+
+  const handleShowAlert = (productId: string, itemId: string, productName: string, configurations: string[]) => {
+    toast.loading(
+      t => (
+        <Box>
+          <p>{`Do want to delete ${productName} ${configurations.join(' ')}?`}</p>
+          <Box sx={{ display: 'flex', justifyContent: 'end', columnGap: '12px' }}>
+            <Button onClick={() => toast.dismiss(t.id)} type='button' color='error' variant='text'>
+              no
+            </Button>
+            <Button
+              onClick={() => {
+                toast.dismiss(t.id)
+                handeDeleteProductItem(productId, itemId)
+              }}
+              type='button'
+              color='error'
+              variant='contained'
+            >
+              Yes
+            </Button>
+          </Box>
+        </Box>
+      ),
+      {
+        id: 'warningToast',
+        style: { maxWidth: '500px' },
+        icon: <WarningRoundedIcon color='error' />
+      }
+    )
+  }
 
   return (
     <Fragment>
@@ -51,9 +100,9 @@ const Row = (props: { row: IProductTable }) => {
         <TableCell colSpan={6} sx={{ py: '0 !important' }}>
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ m: 2 }}>
-              <Typography variant='h6' gutterBottom component='div'>
+              {/* <Typography variant='h6' gutterBottom component='div'>
                 Product items
-              </Typography>
+              </Typography> */}
               <Table size='small' aria-label='purchases'>
                 <TableHead>
                   <TableRow>
@@ -73,15 +122,26 @@ const Row = (props: { row: IProductTable }) => {
                         ))}
                       </TableCell>
                       <TableCell>{item.price}</TableCell>
-                      <TableCell align='right'>{100}</TableCell>
+                      <TableCell align='right'>{item.quantity}</TableCell>
                       <TableCell align='right'>{'10%'}</TableCell>
                       <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
-                        <Fab color='primary' size='small' aria-label='edit'>
-                          <EditIcon />
-                        </Fab>
-                        <Fab color='error' size='small' aria-label='delete'>
+                        <IconButton
+                          onClick={() =>
+                            handleShowAlert(
+                              row._id,
+                              item._id,
+                              row.name,
+                              item.productConfigurations.map(item => item.value)
+                            )
+                          }
+                          aria-label='delete'
+                          color='error'
+                        >
                           <DeleteIcon />
-                        </Fab>
+                        </IconButton>
+                        <IconButton aria-label='delete' color='primary'>
+                          <EditIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -96,13 +156,18 @@ const Row = (props: { row: IProductTable }) => {
 }
 
 const TableCollapsible = () => {
-  const [products, setProducts] = useState<IProductTable[]>()
+  //   const [products, setProducts] = useState<IProductTable[]>()
+  const dispatch = useAppDispatch()
+  const { products } = useAppSelector(selectProducts)
+
+  const handleGetProduct = async () => {
+    if (products.length === 0) {
+      await dispatch(getProducts()).unwrap()
+    }
+  }
 
   useEffect(() => {
-    productApi
-      .getProductTable()
-      .then(data => setProducts(data.data.data))
-      .catch(error => console.log('error: ', error))
+    handleGetProduct()
   }, [])
 
   return (

@@ -16,6 +16,16 @@ const productApi = {
 
   getProductTable: () => {
     return axiosService.get<IResponseSuccess<IProductTable[]>>(`${URL}/dashboard`)
+  },
+
+  createProductItem: (body: FormData) => {
+    return axiosService.post<IResponseSuccess<ICreateProductItemRes>>(`${URL}/item`, body)
+  },
+
+  deleteProductItem: (productId: string, productItemId: string) => {
+    return axiosService.delete<IResponseSuccess<IDeleteProductItemRes>>(
+      `${URL}/dashboard/product-item/${productId}/${productItemId}`
+    )
   }
 }
 
