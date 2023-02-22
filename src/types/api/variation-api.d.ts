@@ -8,3 +8,8 @@ declare interface IVariationOptionsRes {
     value: ITranslate[]
   }[]
 }
+
+declare interface CreateVariation {
+  name: ITranslate[]
+  options: ITranslateV2[]
+}

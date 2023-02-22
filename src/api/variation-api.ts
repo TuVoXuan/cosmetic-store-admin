@@ -12,6 +12,14 @@ const variationApi = {
 
   getVariationOptions: (parentId: string) => {
     return axiosService.get<IResponseSuccess<IVariationOptionsRes>>(`${URL}/options?parentId=${parentId}`)
+  },
+
+  createVariation: (body: CreateVariation) => {
+    return axiosService.post<IResponseSuccess<IVariationOptionsRes>>(`${URL}`, body)
+  },
+
+  getVariationTable: () => {
+    return axiosService.get<IResponseSuccess<IVariationOptionsRes[]>>(`${URL}/table`)
   }
 }
 

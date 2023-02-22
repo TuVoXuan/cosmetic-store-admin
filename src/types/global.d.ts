@@ -3,6 +3,11 @@ declare interface ITranslate {
   value: string
 }
 
+declare interface ITranslateV2 {
+  vi: string
+  en: string
+}
+
 declare interface IOption {
   label: string
   value: string
