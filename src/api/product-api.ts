@@ -7,7 +7,7 @@ const URL = `${API}/${ENDPOINT}`
 
 const productApi = {
   create: (body: ICreateProduct) => {
-    return axiosService.post<IResponseSuccess<ICreateProduct>>(`${URL}`, body)
+    return axiosService.post<IResponseSuccess<ICreateProductRes>>(`${URL}`, body)
   },
 
   getListName: () => {
@@ -26,6 +26,10 @@ const productApi = {
     return axiosService.delete<IResponseSuccess<IDeleteProductItemRes>>(
       `${URL}/dashboard/product-item/${productId}/${productItemId}`
     )
+  },
+
+  deleteProduct: (productId: string) => {
+    return axiosService.delete<IResponseSuccess<string>>(`${URL}/dashboard/product/${productId}`)
   }
 }
 

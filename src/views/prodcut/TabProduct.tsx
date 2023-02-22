@@ -19,6 +19,9 @@ import brandApi from '../../api/brand-api'
 import variationApi from '../../api/variation-api'
 import categoryApi from '../../api/category-api'
 import productApi from '../../api/product-api'
+import { toast } from 'react-hot-toast'
+import { useAppDispatch } from '../../store/configureStore'
+import { addProduct } from '../../redux/reducers/product-slice'
 
 interface FormValue {
   nameVi: string
@@ -40,6 +43,9 @@ const TabProduct = () => {
   const [brands, setBrands] = useState<IOption[]>([])
   const [variations, setVariations] = useState<IOption[]>([])
   const [categories, setCategories] = useState<IOption[]>([])
+
+  // ** Redux Toolkit
+  const dispatch = useAppDispatch()
 
   // ** react-hook-form
   const {
@@ -183,9 +189,11 @@ const TabProduct = () => {
         categories: data.category.map(item => item.value),
         variations: data.variation.map(item => item.value)
       })
-      console.log('product: ', res.data.data)
+      dispatch(addProduct(res.data.data))
+      toast.success('Create product success')
     } catch (error) {
       console.log('error: ', error)
+      toast.error((error as IResponseError).error)
     }
   }
 
