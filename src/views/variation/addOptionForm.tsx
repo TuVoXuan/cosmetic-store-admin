@@ -3,20 +3,21 @@ import { Button, Card, CardContent, CardHeader, Grid, IconButton, TextField } fr
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import { Controller, useForm } from 'react-hook-form'
 import { useAppDispatch } from '../../store/configureStore'
-import { createVariation } from '../../redux/actions/variation-action'
+import { addOptions } from '../../redux/actions/variation-action'
 import { toast } from 'react-hot-toast'
+import { useVariation } from '../../context/variation'
 
-interface IFormVariation {
-  variationVi: string
-  variationEn: string
+interface IFormOption {
   [index: string]: string
 }
 
-export default function CreateVariationForm() {
+export default function AddOptionsForm() {
   const dispatch = useAppDispatch()
+  const { selectedVariation } = useVariation()
+
   const [optionList, setOptionList] = useState<string[]>([])
 
-  const { control, handleSubmit, unregister, reset } = useForm<IFormVariation>()
+  const { control, handleSubmit, unregister } = useForm<IFormOption>()
 
   const add = () => {
     const num = Math.floor(Math.random() * 1000)
@@ -30,7 +31,7 @@ export default function CreateVariationForm() {
     setOptionList(value => value.filter(item => item !== name))
   }
 
-  const onSubmit = async (value: IFormVariation) => {
+  const onSubmit = async (value: IFormOption) => {
     const options: ITranslateV2[] = optionList.map(name => ({
       vi: value[name + 'vi'],
       en: value[name + 'en']
@@ -38,25 +39,11 @@ export default function CreateVariationForm() {
 
     try {
       dispatch(
-        createVariation({
-          name: [
-            {
-              language: 'vi',
-              value: value['variationVi']
-            },
-            {
-              language: 'en',
-              value: value['variationEn']
-            }
-          ],
+        addOptions({
+          parentVariation: selectedVariation._id,
           options
         })
       ).unwrap()
-
-      reset({
-        variationEn: '',
-        variationVi: ''
-      })
 
       for (const name of optionList) {
         remove(name)
@@ -64,7 +51,7 @@ export default function CreateVariationForm() {
 
       setOptionList([])
 
-      toast.success('Create variation success')
+      toast.success('Create variation options success')
     } catch (error) {
       toast.error((error as IResponseError).error)
     }
@@ -72,46 +59,26 @@ export default function CreateVariationForm() {
 
   return (
     <Card>
-      <CardHeader title={'Add variation'} titleTypographyProps={{ variant: 'h5' }} />
+      <CardHeader title={'Add options'} titleTypographyProps={{ variant: 'h5' }} />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={7}>
             <Grid item xs={12} sm={5}>
-              <Controller
-                name={'variationVi'}
-                defaultValue={''}
-                rules={{ required: { value: true, message: 'Variation is required' } }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <TextField
-                    error={invalid}
-                    helperText={error?.message}
-                    fullWidth
-                    label='Variation (vi)'
-                    placeholder='Công dụng'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
+              <TextField
+                fullWidth
+                label='Variation (vi)'
+                placeholder='Công dụng'
+                value={selectedVariation.name.filter(item => item.language === 'vi')[0].value}
+                disabled
               />
             </Grid>
             <Grid item xs={12} sm={5}>
-              <Controller
-                name={'variationEn'}
-                defaultValue={''}
-                rules={{ required: { value: true, message: 'Variation is required' } }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <TextField
-                    error={invalid}
-                    helperText={error?.message}
-                    fullWidth
-                    label='Variation (en)'
-                    placeholder='Công dụng'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
+              <TextField
+                fullWidth
+                label='Variation (en)'
+                placeholder='Công dụng'
+                value={selectedVariation.name.filter(item => item.language === 'en')[0].value}
+                disabled
               />
             </Grid>
             {optionList.length > 0 &&

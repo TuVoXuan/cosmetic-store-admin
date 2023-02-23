@@ -20,6 +20,10 @@ const variationApi = {
 
   getVariationTable: () => {
     return axiosService.get<IResponseSuccess<IVariationOptionsRes[]>>(`${URL}/table`)
+  },
+
+  addOptions: (body: AddOptions) => {
+    return axiosService.post<IResponseSuccess<IVariationOption[]>>(`${URL}/options`, body)
   }
 }
 

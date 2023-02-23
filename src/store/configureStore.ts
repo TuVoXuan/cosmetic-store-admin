@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import productReducer from '../redux/reducers/product-slice'
+import variationReducer from '../redux/reducers/variation-slide'
 
 export const store = configureStore({
   reducer: {
-    products: productReducer
+    products: productReducer,
+    variations: variationReducer
   }
 })
 
