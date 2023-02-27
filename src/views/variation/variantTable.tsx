@@ -11,9 +11,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { selectVariations } from '../../redux/reducers/variation-slide'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
-import { getVariations } from '../../redux/actions/variation-action'
+import { deleteOption, getVariations } from '../../redux/actions/variation-action'
 import { Box } from '@mui/system'
 import { useVariation } from '../../context/variation'
+import { toast } from 'react-hot-toast'
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded'
 
 export default function VariantTable() {
   const variations = useAppSelector(selectVariations).variations
@@ -30,6 +32,63 @@ export default function VariantTable() {
       setSelectedVariation(selectedVariation.variation)
     }
     setTab('add-options')
+  }
+
+  const handleConfirmDeleteOption =
+    (
+      parent: string,
+      option: {
+        _id: string
+        value: ITranslate[]
+      }
+    ) =>
+    () => {
+      toast.loading(
+        t => (
+          <Box>
+            <p>
+              Do want to delete{' '}
+              <span style={{ fontWeight: 700 }}>{option.value.find(item => item.language === 'vi')?.value}</span>?
+            </p>
+            <Box sx={{ display: 'flex', justifyContent: 'end', columnGap: '12px' }}>
+              <Button onClick={() => toast.dismiss(t.id)} type='button' color='error' variant='text'>
+                no
+              </Button>
+              <Button
+                onClick={() => {
+                  toast.dismiss(t.id)
+                  handleDeleteOption(parent, option._id)
+                }}
+                type='button'
+                color='error'
+                variant='contained'
+              >
+                Yes
+              </Button>
+            </Box>
+          </Box>
+        ),
+        {
+          id: 'warningToast',
+          style: { maxWidth: '500px' },
+          icon: <WarningRoundedIcon color='error' />
+        }
+      )
+    }
+
+  const handleDeleteOption = async (parent: string, children: string) => {
+    try {
+      await dispatch(
+        deleteOption({
+          parent,
+          children
+        })
+      ).unwrap()
+
+      toast.success('Delete option success')
+    } catch (error) {
+      toast.error((error as IResponseError).error)
+    }
   }
 
   useEffect(() => {
@@ -78,7 +137,7 @@ export default function VariantTable() {
                           <Chip
                             key={option._id}
                             label={option.value.filter(item => item.language === 'vi')[0].value}
-                            onDelete={() => console.log('first')}
+                            onDelete={handleConfirmDeleteOption(variation._id, option)}
                           />
                         ))}
                     </Box>

@@ -33,3 +33,8 @@ declare interface IVariationOption {
   _id: string
   value: ITranslate[]
 }
+
+declare interface DeleteVariationOption {
+  parent: string
+  children: string
+}

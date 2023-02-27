@@ -24,6 +24,10 @@ const variationApi = {
 
   addOptions: (body: AddOptions) => {
     return axiosService.post<IResponseSuccess<IVariationOption[]>>(`${URL}/options`, body)
+  },
+
+  deleteOption: (param: string) => {
+    return axiosService.delete<IResponseSuccess<string>>(`${URL}/option/${param}`)
   }
 }
 

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
-import { addOptions, createVariation, getVariations } from '../actions/variation-action'
+import { addOptions, createVariation, deleteOption, getVariations } from '../actions/variation-action'
 
 export interface VariationState {
   variations: IVariationOptionsRes[]
@@ -25,6 +25,13 @@ export const variationsSlice = createSlice({
       const variation = state.variations.find(item => item.variation._id === action.payload.parentVariation)
       for (const option of action.payload.variationOptions) {
         variation?.variationOptions.push(option)
+      }
+    })
+    builder.addCase(deleteOption.fulfilled, (state, action: PayloadAction<DeleteVariationOption>) => {
+      const variation = state.variations.find(item => item.variation._id === action.payload.parent)
+
+      if (variation) {
+        variation.variationOptions = variation.variationOptions.filter(item => item._id !== action.payload.children)
       }
     })
   }

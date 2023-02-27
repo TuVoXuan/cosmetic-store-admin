@@ -21,7 +21,7 @@ export const createVariation = createAsyncThunk('variations/create', async (body
   }
 })
 
-export const addOptions = createAsyncThunk('variations/optons/create', async (body: AddOptions, thunkAPI) => {
+export const addOptions = createAsyncThunk('variations/options/create', async (body: AddOptions, thunkAPI) => {
   try {
     const response = await variationApi.addOptions(body)
 
@@ -33,3 +33,16 @@ export const addOptions = createAsyncThunk('variations/optons/create', async (bo
     return thunkAPI.rejectWithValue(error)
   }
 })
+
+export const deleteOption = createAsyncThunk(
+  'variations/options/delete',
+  async (param: DeleteVariationOption, thunkAPI) => {
+    try {
+      await variationApi.deleteOption(param.children)
+
+      return param
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)
