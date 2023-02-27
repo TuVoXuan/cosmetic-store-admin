@@ -6,6 +6,19 @@ declare interface ICreateProduct {
   brand: string
 }
 
+declare interface ICreateProductRes {
+  _id: string
+  name: string
+  brand: {
+    _id: string
+    name: string
+  }[]
+  categories: {
+    _id: string
+    name: string
+  }[]
+}
+
 declare interface IProductNameRes {
   _id: string
   name: ITranslate[]
@@ -34,7 +47,7 @@ declare interface IProductTable {
     _id: string
     name: string
   }[]
-  cagetories: {
+  categories: {
     _id: string
     name: string
   }[]
