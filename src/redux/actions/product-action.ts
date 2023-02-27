@@ -18,3 +18,15 @@ export const deleteProduct = createAsyncThunk('products/delete', async (data: st
     return thunkAPI.rejectWithValue(error)
   }
 })
+
+export const updateProduct = createAsyncThunk(
+  'products/update',
+  async (data: { productId: string; body: IProductUpdateReq }, thunkAPI) => {
+    try {
+      const response = await productApi.updateProduct(data.productId, data.body)
+      return response.data.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)

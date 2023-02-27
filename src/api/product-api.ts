@@ -30,6 +30,14 @@ const productApi = {
 
   deleteProduct: (productId: string) => {
     return axiosService.delete<IResponseSuccess<string>>(`${URL}/dashboard/product/${productId}`)
+  },
+
+  getProductById: (productId: string) => {
+    return axiosService.get<IResponseSuccess<IProductSimPle>>(`${URL}/${productId}`)
+  },
+
+  updateProduct: (productId: string, body: IProductUpdateReq) => {
+    return axiosService.put<IResponseSuccess<IProductUpdatedRes>>(`${URL}/${productId}`, body)
   }
 }
 

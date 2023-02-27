@@ -374,8 +374,6 @@ const TabProductItem = () => {
                       )}
                       onChange={(e, value) => {
                         onChange(value)
-                        handleGetVariationOptions()
-
                         return value
                       }}
                     />

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
-import { deleteProduct, getProducts } from '../actions/product-action'
+import { deleteProduct, getProducts, updateProduct } from '../actions/product-action'
 
 export interface ProductState {
   products: IProductTable[]
@@ -43,6 +43,16 @@ export const productsSlice = createSlice({
       .addCase(deleteProduct.fulfilled, (state, action: PayloadAction<string>) => {
         const productId = action.payload
         state.products = state.products.filter(product => product._id !== productId)
+      })
+      .addCase(updateProduct.fulfilled, (state, action: PayloadAction<IProductUpdatedRes>) => {
+        const updatedProduct = action.payload
+        console.log('updatedProduct: ', updatedProduct)
+        const product = state.products.find(prod => prod._id === updatedProduct._id)
+        if (product) {
+          product.name = updatedProduct.name
+          product.brand = updatedProduct.brand
+          product.categories = updatedProduct.categories
+        }
       })
   }
 })
