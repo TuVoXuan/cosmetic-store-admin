@@ -165,7 +165,7 @@ const TabProduct = () => {
 
   const onSubmit = async (data: FormValue) => {
     try {
-      const res = await productApi.create({
+      const body = {
         name: [
           {
             language: 'vi',
@@ -187,9 +187,13 @@ const TabProduct = () => {
           }
         ],
         brand: data.brand.value,
-        categories: data.category.map(item => item.value),
-        variations: data.variation.map(item => item.value)
-      })
+        categories: data.category.map(item => item.value)
+      } as ICreateProduct
+
+      if (data.variation && data.variation.length > 0) {
+        body.variations = data.variation.map(item => item.value)
+      }
+      const res = await productApi.create(body)
       dispatch(addProduct(res.data.data))
       toast.success('Create product success')
     } catch (error) {
@@ -254,6 +258,7 @@ const TabProduct = () => {
               <FormControl fullWidth color='error'>
                 <FormLabel error={errors.desVi?.message ? true : false}>Description (vi)</FormLabel>
                 <QuillNoSSRWrapper
+                  style={{ maxHeight: 500, overflowY: 'auto' }}
                   onChange={value => {
                     setValue('desVi', value)
                   }}
@@ -272,6 +277,7 @@ const TabProduct = () => {
               <FormControl fullWidth>
                 <FormLabel error={errors.desEn?.message ? true : false}>Description (en)</FormLabel>
                 <QuillNoSSRWrapper
+                  style={{ maxHeight: 500, overflowY: 'auto' }}
                   onChange={value => {
                     setValue('desEn', value)
                   }}
@@ -341,7 +347,6 @@ const TabProduct = () => {
               <FormControl fullWidth>
                 <Controller
                   name={'variation'}
-                  rules={{ required: { value: true, message: 'Variation is required' } }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                     <Autocomplete

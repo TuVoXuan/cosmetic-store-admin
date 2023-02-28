@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ElementType, ChangeEvent, Fragment, useEffect } from 'react'
+import { useState, ElementType, ChangeEvent, Fragment, useEffect, useRef } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -61,28 +61,33 @@ const TabProductItem = () => {
   const [productNames, setProductNames] = useState<IProductNameOption[]>([])
   const [variationsGroup, setVariationsGroup] = useState<IVariationGroup[]>([])
 
+  // **Ref
+  const imagesRef = useRef<HTMLInputElement | null>(null)
+  const thumbnailRef = useRef<HTMLInputElement | null>(null)
+
   // ** Redux Toolkit
   const dispatch = useAppDispatch()
 
   // ** react-hook-form
   const {
-    register,
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
-    getValues
+    getValues,
+    reset
   } = useForm<FormValue>({
     defaultValues: {
-      product: undefined
+      product: undefined,
+      thumbnail: undefined,
+      images: undefined
     }
   })
 
   const onChangeThumbnail = (file: ChangeEvent) => {
     const { files } = file.target as HTMLInputElement
     if (files && files.length !== 0) {
-      setThumbnailFile(files[0])
       setThumbnail(URL.createObjectURL(files[0]))
+      setThumbnailFile(files[0])
     }
   }
 
@@ -216,22 +221,37 @@ const TabProductItem = () => {
                 <Box>
                   <ButtonStyled component='label' variant='contained' htmlFor='thumbnail-upload-image'>
                     Upload Thumbnail
-                    <input
-                      {...register('thumbnail', { required: { value: true, message: 'Thumbnail is required' } })}
-                      hidden
-                      type='file'
-                      onChange={e => {
-                        onChangeThumbnail(e)
-                      }}
-                      accept='image/png, image/jpeg'
-                      id='thumbnail-upload-image'
+                    <Controller
+                      name='thumbnail'
+                      control={control}
+                      rules={{ required: { value: true, message: 'Thumbnail is required' } }}
+                      render={({ field: { onChange, value, ref } }) => (
+                        <input
+                          hidden
+                          type='file'
+                          value={value}
+                          ref={e => {
+                            ref(e)
+                            thumbnailRef.current = e
+                          }}
+                          onChange={e => {
+                            onChange(e)
+                            onChangeThumbnail(e)
+                          }}
+                          accept='image/png, image/jpeg'
+                          id='thumbnail-upload-image'
+                        />
+                      )}
                     />
                   </ButtonStyled>
                   <ResetButtonStyled
                     color='error'
                     variant='outlined'
                     onClick={() => {
-                      setValue('thumbnail', undefined)
+                      reset({ ...getValues(), thumbnail: null })
+                      if (thumbnailRef.current) {
+                        thumbnailRef.current.value = ''
+                      }
                       setThumbnail('/images/avatars/1.png')
                     }}
                   >
@@ -255,23 +275,38 @@ const TabProductItem = () => {
                 <Box sx={{ mt: 4 }}>
                   <ButtonStyled component='label' variant='contained' htmlFor='products-upload-image'>
                     Upload product images
-                    <input
-                      hidden
-                      {...register('images', { required: { value: true, message: 'Images is required' } })}
-                      type='file'
-                      multiple
-                      onChange={e => {
-                        onChangeImgs(e)
-                      }}
-                      accept='image/png, image/jpeg'
-                      id='products-upload-image'
+                    <Controller
+                      name='images'
+                      defaultValue={undefined}
+                      control={control}
+                      rules={{ required: { value: true, message: 'Images is required' } }}
+                      render={({ field: { onChange, value, ref } }) => (
+                        <input
+                          type='file'
+                          multiple
+                          hidden
+                          ref={e => {
+                            ref(e), (imagesRef.current = e)
+                          }}
+                          accept='image/png, image/jpeg'
+                          value={value}
+                          onChange={e => {
+                            onChange(e)
+                            onChangeImgs(e)
+                          }}
+                          id='products-upload-image'
+                        />
+                      )}
                     />
                   </ButtonStyled>
                   <ResetButtonStyled
                     color='error'
                     variant='outlined'
                     onClick={() => {
-                      setValue('images', undefined)
+                      reset({ ...getValues(), images: null })
+                      if (imagesRef.current) {
+                        imagesRef.current.value = ''
+                      }
                       setImgSrc(['/images/avatars/1.png'])
                     }}
                   >

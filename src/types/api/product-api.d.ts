@@ -2,7 +2,7 @@ declare interface ICreateProduct {
   name: ITranslate[]
   description: ITranslate[]
   categories: string[]
-  variations: string[]
+  variations?: string[]
   brand: string
 }
 
