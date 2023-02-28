@@ -148,7 +148,7 @@ const Row = (props: { row: IProductTable }) => {
             <Chip key={category._id} label={category.name} />
           ))}
         </TableCell>
-        <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
+        <TableCell align='right'>
           <IconButton onClick={() => handleAlertDeleteProd(row._id, row.name)} aria-label='delete' color='error'>
             <DeleteIcon />
           </IconButton>
@@ -185,7 +185,7 @@ const Row = (props: { row: IProductTable }) => {
                       <TableCell>{item.price}</TableCell>
                       <TableCell align='right'>{item.quantity}</TableCell>
                       <TableCell align='right'>{'10%'}</TableCell>
-                      <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
+                      <TableCell align='right'>
                         <IconButton
                           onClick={() =>
                             handleAlertDeleteProdItem(
