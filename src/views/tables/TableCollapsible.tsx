@@ -197,7 +197,7 @@ const Row = (props: { row: IProductTable }) => {
                       <TableCell>{item.price}</TableCell>
                       <TableCell align='right'>{item.quantity}</TableCell>
                       <TableCell align='right'>{'10%'}</TableCell>
-                      <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
+                      <TableCell align='right'>
                         <IconButton
                           onClick={() =>
                             handleAlertDeleteProdItem(
