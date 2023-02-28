@@ -145,24 +145,28 @@ const Row = (props: { row: IProductTable }) => {
           {row.name}
         </TableCell>
         <TableCell>{row.brand[0].name}</TableCell>
-        <TableCell align='right' sx={{ '* + *': { ml: 2 } }}>
-          {row.categories.map(category => (
-            <Chip key={category._id} label={category.name} />
-          ))}
+        <TableCell align='right'>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {row.categories.map(category => (
+              <Chip key={category._id} label={category.name} />
+            ))}
+          </Box>
         </TableCell>
-        <TableCell align='right' sx={{ display: 'flex', columnGap: 2 }}>
-          <IconButton onClick={() => handleAlertDeleteProd(row._id, row.name)} aria-label='delete' color='error'>
-            <DeleteIcon />
-          </IconButton>
-          <IconButton
-            onClick={() => {
-              router.push(`/product/update/${row._id}`)
-            }}
-            aria-label='delete'
-            color='primary'
-          >
-            <EditIcon />
-          </IconButton>
+        <TableCell align='right'>
+          <Box sx={{ display: 'flex', columnGap: 2 }}>
+            <IconButton onClick={() => handleAlertDeleteProd(row._id, row.name)} aria-label='delete' color='error'>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                router.push(`/product/update/${row._id}`)
+              }}
+              aria-label='delete'
+              color='primary'
+            >
+              <EditIcon />
+            </IconButton>
+          </Box>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -208,7 +212,11 @@ const Row = (props: { row: IProductTable }) => {
                         >
                           <DeleteIcon />
                         </IconButton>
-                        <IconButton aria-label='delete' color='primary'>
+                        <IconButton
+                          onClick={() => router.push(`/product/update/${row._id}/${item._id}`)}
+                          aria-label='delete'
+                          color='primary'
+                        >
                           <EditIcon />
                         </IconButton>
                       </TableCell>
@@ -242,6 +250,13 @@ const TableCollapsible = () => {
   return (
     <TableContainer component={Paper}>
       <Table aria-label='Products'>
+        <colgroup>
+          <col width='5%' />
+          <col width='45%' />
+          <col width='10%' />
+          <col width='30%' />
+          <col width='10%' />
+        </colgroup>
         <TableHead>
           <TableRow>
             <TableCell />
