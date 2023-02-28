@@ -146,7 +146,7 @@ const Row = (props: { row: IProductTable }) => {
         </TableCell>
         <TableCell>{row.brand[0].name}</TableCell>
         <TableCell align='right'>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
             {row.categories.map(category => (
               <Chip key={category._id} label={category.name} />
             ))}
@@ -252,18 +252,18 @@ const TableCollapsible = () => {
       <Table aria-label='Products'>
         <colgroup>
           <col width='5%' />
-          <col width='45%' />
+          <col width='37.5%' />
           <col width='10%' />
-          <col width='30%' />
+          <col width='37.5%' />
           <col width='10%' />
         </colgroup>
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell>Name</TableCell>
+            <TableCell align='center'>Name</TableCell>
             <TableCell>Brand</TableCell>
-            <TableCell align='right'>Category</TableCell>
-            <TableCell align='right'>Actions</TableCell>
+            <TableCell align='center'>Category</TableCell>
+            <TableCell align='center'>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{products && products.map(product => <Row key={product._id} row={product} />)}</TableBody>
