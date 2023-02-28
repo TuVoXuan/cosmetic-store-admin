@@ -26,11 +26,13 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded'
 import { removeProductItem, selectProducts } from '../../redux/reducers/product-slice'
 import { deleteProduct, getProducts } from '../../redux/actions/product-action'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
+import { useRouter } from 'next/router'
 
 const Row = (props: { row: IProductTable }) => {
   // ** Props
   const { row } = props
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   // ** State
   const [open, setOpen] = useState<boolean>(false)
@@ -152,7 +154,13 @@ const Row = (props: { row: IProductTable }) => {
           <IconButton onClick={() => handleAlertDeleteProd(row._id, row.name)} aria-label='delete' color='error'>
             <DeleteIcon />
           </IconButton>
-          <IconButton aria-label='delete' color='primary'>
+          <IconButton
+            onClick={() => {
+              router.push(`/product/update/${row._id}`)
+            }}
+            aria-label='delete'
+            color='primary'
+          >
             <EditIcon />
           </IconButton>
         </TableCell>

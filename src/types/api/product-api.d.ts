@@ -62,3 +62,31 @@ declare interface ICreateProductItemRes {
   productId: string
   productItem: IProductItemTable
 }
+
+declare interface IProductSimPle {
+  _id: string
+  name: ITranslate[]
+  description: ITranslate[]
+  categories: string[]
+  brand: string
+}
+
+declare interface IProductUpdateReq {
+  name: ITranslate[]
+  description: ITranslate[]
+  categories: string[]
+  brand: string
+}
+
+declare interface IProductUpdatedRes {
+  _id: string
+  name: string
+  brand: {
+    _id: string
+    name: string
+  }[]
+  categories: {
+    _id: string
+    name: string
+  }[]
+}
