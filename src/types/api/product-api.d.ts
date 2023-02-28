@@ -90,3 +90,27 @@ declare interface IProductUpdatedRes {
     name: string
   }[]
 }
+
+declare interface IProdtem {
+  _id: string
+  price: number
+  quantity: number
+  thumbnail: string
+  images: string[]
+  productConfigurations: string[]
+}
+
+declare interface IProdItemRes {
+  variations: string[]
+  prodItem: IProdtem
+}
+
+declare interface IUpdateProdItem {
+  itemId: string
+  body: FormData
+}
+
+declare interface IUpdateProdItemRes {
+  productId: string
+  prodItem: IProductItemTable
+}

@@ -32,3 +32,12 @@ export const updateProduct = createAsyncThunk(
     }
   }
 )
+
+export const updateProdItem = createAsyncThunk('products/update-item', async (data: IUpdateProdItem, thunkAPI) => {
+  try {
+    const response = await productApi.updateProdItem(data)
+    return response.data.data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error)
+  }
+})

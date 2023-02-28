@@ -33,11 +33,24 @@ const productApi = {
   },
 
   getProductById: (productId: string) => {
-    return axiosService.get<IResponseSuccess<IProductSimPle>>(`${URL}/${productId}`)
+    return axiosService.get<IResponseSuccess<IProductSimPle>>(`${URL}/dashboard/product/${productId}`)
   },
 
   updateProduct: (productId: string, body: IProductUpdateReq) => {
-    return axiosService.put<IResponseSuccess<IProductUpdatedRes>>(`${URL}/${productId}`, body)
+    return axiosService.put<IResponseSuccess<IProductUpdatedRes>>(`${URL}/dashboard/product/${productId}`, body)
+  },
+
+  getProductItem: (productId: string, itemId: string) => {
+    return axiosService.get<IResponseSuccess<IProdItemRes>>(
+      `${URL}/dashboard/product/${productId}/product-item/${itemId}`
+    )
+  },
+
+  updateProdItem: (data: IUpdateProdItem) => {
+    return axiosService.put<IResponseSuccess<IUpdateProdItemRes>>(
+      `${URL}/dashboard/product-item/${data.itemId}`,
+      data.body
+    )
   }
 }
 

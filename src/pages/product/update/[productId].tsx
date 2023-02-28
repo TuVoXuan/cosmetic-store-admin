@@ -74,7 +74,6 @@ export const getServerSideProps = async (context: any) => {
 }
 
 function UpdateProduct({ brands, categories, product }: Props) {
-  console.log('product: ', product)
   const router = useRouter()
   const productId = router.query.productId as string
 
@@ -149,7 +148,6 @@ function UpdateProduct({ brands, categories, product }: Props) {
 
   const onSubmit = async (data: FormValue) => {
     try {
-      console.log('data: ', data)
       await dispatch(
         updateProduct({
           productId,
