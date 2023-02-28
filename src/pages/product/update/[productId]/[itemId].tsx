@@ -95,6 +95,7 @@ export const getServerSideProps = async (context: any) => {
       })
     })
   }
+
   return {
     props: {
       productId,
@@ -335,8 +336,8 @@ function UpdateProductItem({ optionsGroup, prodItem, productId }: Props) {
                     <Autocomplete
                       disablePortal
                       isOptionEqualToValue={(option, value) => option.value === value.value}
-                      defaultValue={item.variationOptions.find(op =>
-                        prodItem.productConfigurations.findIndex(prodConfig => prodConfig === op.value)
+                      defaultValue={item.variationOptions.find(
+                        op => prodItem.productConfigurations.findIndex(prodConfig => prodConfig === op.value) > -1
                       )}
                       id={item.variationName}
                       options={item.variationOptions}
