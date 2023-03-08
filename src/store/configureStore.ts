@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import productReducer from '../redux/reducers/product-slice'
 import variationReducer from '../redux/reducers/variation-slide'
 import brandReducer from '../redux/reducers/brand-slice'
+import tagReducer from '../redux/reducers/tag-slice'
 
 export const store = configureStore({
   reducer: {
     products: productReducer,
     variations: variationReducer,
-    brands: brandReducer
+    brands: brandReducer,
+    tags: tagReducer
   }
 })
 

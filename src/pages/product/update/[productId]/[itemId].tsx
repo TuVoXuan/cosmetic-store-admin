@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ElementType, ChangeEvent, Fragment, useEffect } from 'react'
+import { useState, ElementType, ChangeEvent, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -16,9 +16,9 @@ import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import productApi from '../../../../api/product-api'
 import variationApi from '../../../../api/variation-api'
-import { addProductItem } from '../../../../redux/reducers/product-slice'
 import { useAppDispatch } from '../../../../store/configureStore'
 import { updateProdItem } from '../../../../redux/actions/product-action'
+import { tagApi } from '../../../../api/product-tag-api'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -49,6 +49,7 @@ interface FormValue {
   images: any
   price: number
   quantity: number
+  tags: any
   [index: string]: any
 }
 
@@ -56,6 +57,7 @@ interface Props {
   productId: string
   prodItem: IProdtem
   optionsGroup: IVariationGroup[]
+  tags: IOption[]
 }
 
 export const getServerSideProps = async (context: any) => {
@@ -64,6 +66,7 @@ export const getServerSideProps = async (context: any) => {
 
   // fetch product item and variation
   const resProdItem = await productApi.getProductItem(productId, itemId)
+  const tags = await tagApi.getTags()
   const { variations, prodItem } = resProdItem.data.data
 
   // fetch variation options
@@ -100,12 +103,13 @@ export const getServerSideProps = async (context: any) => {
     props: {
       productId,
       prodItem,
-      optionsGroup
+      optionsGroup,
+      tags: tags.data.data.map(item => ({ label: item.name, value: item._id }))
     }
   }
 }
 
-function UpdateProductItem({ optionsGroup, prodItem, productId }: Props) {
+function UpdateProductItem({ optionsGroup, prodItem, productId, tags }: Props) {
   // ** State
   const [thumbnailFile, setThumbnailFile] = useState<File>()
   const [thumbnail, setThumbnail] = useState<string>(prodItem.thumbnail)
@@ -121,12 +125,12 @@ function UpdateProductItem({ optionsGroup, prodItem, productId }: Props) {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
-    getValues
+    setValue
   } = useForm<FormValue>({
     defaultValues: {
       price: prodItem.price,
-      quantity: prodItem.quantity
+      quantity: prodItem.quantity,
+      tags: tags.filter(item => prodItem.tags.includes(item.value))
     }
   })
 
@@ -157,34 +161,39 @@ function UpdateProductItem({ optionsGroup, prodItem, productId }: Props) {
 
   const onSubmit = (data: any) => {
     console.log('data: ', data)
-    const formData = new FormData()
-    if (thumbnailFile) {
-      formData.append('thumbnail', thumbnailFile as File)
-    }
 
-    if (imgFiles) {
-      for (let file of imgFiles) {
-        formData.append('images', file)
-      }
-    }
+    // const formData = new FormData()
+    // if (thumbnailFile) {
+    //   formData.append('thumbnail', thumbnailFile as File)
+    // }
 
-    formData.append('productId', productId)
+    // if (imgFiles) {
+    //   for (const file of imgFiles) {
+    //     formData.append('images', file)
+    //   }
+    // }
 
-    formData.append('price', data.price)
+    // formData.append('productId', productId)
 
-    formData.append('quantity', data.quantity)
+    // formData.append('price', data.price)
 
-    optionsGroup.forEach(element => {
-      formData.append('productConfiguration', data[element.variationName].value)
-    })
+    // formData.append('quantity', data.quantity)
 
-    const res = dispatch(updateProdItem({ body: formData, itemId: prodItem._id }))
+    // optionsGroup.forEach(element => {
+    //   formData.append('productConfiguration', data[element.variationName].value)
+    // })
 
-    toast.promise(res, {
-      loading: 'Updating new product item ...',
-      success: 'Update product item success',
-      error: err => (err as IResponseError).error
-    })
+    // for (const tag of data.tags) {
+    //   formData.append('tags', tag.value)
+    // }
+
+    // const res = dispatch(updateProdItem({ body: formData, itemId: prodItem._id })).unwrap()
+
+    // toast.promise(res, {
+    //   loading: 'Updating new product item ...',
+    //   success: 'Update product item success',
+    //   error: err => (err as IResponseError).error
+    // })
   }
 
   useEffect(() => {
@@ -326,6 +335,33 @@ function UpdateProductItem({ optionsGroup, prodItem, productId }: Props) {
               />
             </Grid>
 
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name={'tags'}
+                rules={{ required: { value: true, message: `Tags is required` } }}
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <Autocomplete
+                    disablePortal
+                    multiple
+                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                    defaultValue={tags.filter(item => prodItem.tags.includes(item.value))}
+                    id={'tags'}
+                    options={tags}
+                    sx={{ width: '100%' }}
+                    renderInput={params => (
+                      <TextField {...params} error={invalid} helperText={error?.message} label={'Tags'} />
+                    )}
+                    onChange={(e, value) => {
+                      onChange(value)
+
+                      return value
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+
             {optionsGroup.map(item => (
               <Grid item xs={12} sm={6} key={item.variationName}>
                 <Controller
@@ -347,6 +383,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId }: Props) {
                       )}
                       onChange={(e, value) => {
                         onChange(value)
+
                         return value
                       }}
                     />

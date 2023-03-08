@@ -98,6 +98,7 @@ declare interface IProdtem {
   thumbnail: string
   images: string[]
   productConfigurations: string[]
+  tags: string[]
 }
 
 declare interface IProdItemRes {

@@ -18,6 +18,7 @@ import variationApi from '../../api/variation-api'
 import { toast } from 'react-hot-toast'
 import { useAppDispatch } from '../../store/configureStore'
 import { addProductItem } from '../../redux/reducers/product-slice'
+import { tagApi } from '../../api/product-tag-api'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -60,6 +61,7 @@ const TabProductItem = () => {
   const [imgSrc, setImgSrc] = useState<string[]>(['/images/avatars/1.png'])
   const [productNames, setProductNames] = useState<IProductNameOption[]>([])
   const [variationsGroup, setVariationsGroup] = useState<IVariationGroup[]>([])
+  const [tags, setTags] = useState<IOption[]>([])
 
   // **Ref
   const imagesRef = useRef<HTMLInputElement | null>(null)
@@ -181,13 +183,17 @@ const TabProductItem = () => {
 
     formData.append('quantity', data.quantity)
 
-    for (let file of imgFiles) {
+    for (const file of imgFiles) {
       formData.append('images', file)
     }
 
     variationsGroup.forEach(element => {
       formData.append('productConfiguration', data[element.variationName].value)
     })
+
+    for (const tag of data.tags) {
+      formData.append('tags', tag.value)
+    }
 
     const res = productApi.createProductItem(formData)
 
@@ -202,8 +208,18 @@ const TabProductItem = () => {
     })
   }
 
+  const fetchTags = async () => {
+    const response = await tagApi.getTags()
+
+    setTags(response.data.data.map(item => ({ label: item.name, value: item._id })))
+  }
+
   useEffect(() => {
     handleGetProductNames()
+
+    if (tags.length === 0) {
+      fetchTags()
+    }
   }, [])
 
   return (
@@ -391,6 +407,32 @@ const TabProductItem = () => {
               />
             </Grid>
 
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name={'tags'}
+                rules={{ required: { value: true, message: `Tags is required` } }}
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <Autocomplete
+                    disablePortal
+                    multiple
+                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                    id={'tags'}
+                    options={tags}
+                    sx={{ width: '100%' }}
+                    renderInput={params => (
+                      <TextField {...params} error={invalid} helperText={error?.message} label={'Tags'} />
+                    )}
+                    onChange={(e, value) => {
+                      onChange(value)
+
+                      return value
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+
             {variationsGroup.map(item => (
               <Grid item xs={12} sm={6} key={item.variationName}>
                 <Controller
@@ -409,6 +451,7 @@ const TabProductItem = () => {
                       )}
                       onChange={(e, value) => {
                         onChange(value)
+
                         return value
                       }}
                     />
