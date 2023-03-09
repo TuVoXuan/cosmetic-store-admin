@@ -162,44 +162,44 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags }: Props) {
   const onSubmit = (data: any) => {
     console.log('data: ', data)
 
-    // const formData = new FormData()
-    // if (thumbnailFile) {
-    //   formData.append('thumbnail', thumbnailFile as File)
-    // }
+    const formData = new FormData()
+    if (thumbnailFile) {
+      formData.append('thumbnail', thumbnailFile as File)
+    }
 
-    // if (imgFiles) {
-    //   for (const file of imgFiles) {
-    //     formData.append('images', file)
-    //   }
-    // }
+    if (imgFiles) {
+      for (const file of imgFiles) {
+        formData.append('images', file)
+      }
+    }
 
-    // formData.append('productId', productId)
+    formData.append('productId', productId)
 
-    // formData.append('price', data.price)
+    formData.append('price', data.price)
 
-    // formData.append('quantity', data.quantity)
+    formData.append('quantity', data.quantity)
 
-    // optionsGroup.forEach(element => {
-    //   formData.append('productConfiguration', data[element.variationName].value)
-    // })
+    optionsGroup.forEach(element => {
+      formData.append('productConfiguration', data[element.variationName].value)
+    })
 
-    // for (const tag of data.tags) {
-    //   formData.append('tags', tag.value)
-    // }
+    for (const tag of data.tags) {
+      formData.append('tags', tag.value)
+    }
 
-    // const res = dispatch(updateProdItem({ body: formData, itemId: prodItem._id })).unwrap()
+    const res = dispatch(updateProdItem({ body: formData, itemId: prodItem._id })).unwrap()
 
-    // toast.promise(res, {
-    //   loading: 'Updating new product item ...',
-    //   success: 'Update product item success',
-    //   error: err => (err as IResponseError).error
-    // })
+    toast.promise(res, {
+      loading: 'Updating new product item ...',
+      success: 'Update product item success',
+      error: err => (err as IResponseError).error
+    })
   }
 
   useEffect(() => {
     optionsGroup.forEach(options => {
-      const defautVal = options.variationOptions.find(op =>
-        prodItem.productConfigurations.findIndex(prodConfig => prodConfig === op.value)
+      const defautVal = options.variationOptions.find(
+        op => prodItem.productConfigurations.findIndex(prodConfig => prodConfig === op.value) > -1
       )
       setValue(options.variationName, defautVal)
     })
