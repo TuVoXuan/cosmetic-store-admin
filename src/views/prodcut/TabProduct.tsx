@@ -94,10 +94,7 @@ const TabProduct = () => {
     'script',
     'header',
     'blockquote',
-    // "code-block",
-    // "indent",
     'list',
-    // "direction",
     'align',
     'link',
     'image',
@@ -130,6 +127,7 @@ const TabProduct = () => {
             }
           }
         }
+
         return option
       })
 
@@ -258,14 +256,10 @@ const TabProduct = () => {
               <FormControl fullWidth color='error'>
                 <FormLabel error={errors.desVi?.message ? true : false}>Description (vi)</FormLabel>
                 <QuillNoSSRWrapper
-                  style={{ maxHeight: 500, overflowY: 'auto' }}
                   onChange={value => {
                     setValue('desVi', value)
                   }}
                   theme='snow'
-                  // value={
-                  //   '<p><strong>Cách sử dụng</strong>:</p><p>- Thoa 1 đến 2 lần/ngày lên điểm mụn sau khi được rửa sạch và lau khô.</p><p><br></p><p><strong>Thành phần</strong>:</p><p>Water, Hamamelis, Virginiana Extract, Centella Asiatica Extract, Polysorbate 60, Lactic Acid, Cetyl Alcohol, Glycolic Acid, Manganese Chloride, Dimethicone Phenoxyethanol, Zinc Oxide, Pyridoxine HCL, Niacinamide, Retinal, Bisanolol, Salicylic Acid.</p><p><br></p><p><strong>Công dụng</strong>:</p><p>Ngừa mụn trứng cá, ngừa thâm, dưỡng da..</p><p>Chống lão hóa, giảm mụn sưng viêm..</p><p><br></p><p><strong>Sản phẩm khuyên dùng</strong>:</p><p>Trường hợp da bị mụn là da hỗn hợp, da khô...rửa mặt sạch và vùng da bị mụn bằng sữa rửa mặt chuyên biệt Skinsiogel trước khi thoa Megaduo plus Gel.</p><p>Trường hợp da bị mụn là da dầu, rửa mặt sạch và vùng da bị mụn bằng sữa rửa mặt Vinatid để loại sạch dầu trươc khi thoa Megaduo plus Gel</p><p><br></p><p><strong>Xuất xứ</strong> : Việt Nam, nhà sản xuất Gamma Chemical.</p><p><strong>Hạn sử dụng</strong> : 3 năm kể từ ngày sản xuất..</p><p><strong>Khối lượng</strong> : 15 gram.</p><p><strong>Thương Hiệu</strong> : Gamma</p>'
-                  // }
                   modules={modules}
                   formats={formats}
                 />
@@ -277,14 +271,10 @@ const TabProduct = () => {
               <FormControl fullWidth>
                 <FormLabel error={errors.desEn?.message ? true : false}>Description (en)</FormLabel>
                 <QuillNoSSRWrapper
-                  style={{ maxHeight: 500, overflowY: 'auto' }}
                   onChange={value => {
                     setValue('desEn', value)
                   }}
                   theme='snow'
-                  // value={
-                  //   '<p><strong>Cách sử dụng</strong>:</p><p>- Thoa 1 đến 2 lần/ngày lên điểm mụn sau khi được rửa sạch và lau khô.</p><p><br></p><p><strong>Thành phần</strong>:</p><p>Water, Hamamelis, Virginiana Extract, Centella Asiatica Extract, Polysorbate 60, Lactic Acid, Cetyl Alcohol, Glycolic Acid, Manganese Chloride, Dimethicone Phenoxyethanol, Zinc Oxide, Pyridoxine HCL, Niacinamide, Retinal, Bisanolol, Salicylic Acid.</p><p><br></p><p><strong>Công dụng</strong>:</p><p>Ngừa mụn trứng cá, ngừa thâm, dưỡng da..</p><p>Chống lão hóa, giảm mụn sưng viêm..</p><p><br></p><p><strong>Sản phẩm khuyên dùng</strong>:</p><p>Trường hợp da bị mụn là da hỗn hợp, da khô...rửa mặt sạch và vùng da bị mụn bằng sữa rửa mặt chuyên biệt Skinsiogel trước khi thoa Megaduo plus Gel.</p><p>Trường hợp da bị mụn là da dầu, rửa mặt sạch và vùng da bị mụn bằng sữa rửa mặt Vinatid để loại sạch dầu trươc khi thoa Megaduo plus Gel</p><p><br></p><p><strong>Xuất xứ</strong> : Việt Nam, nhà sản xuất Gamma Chemical.</p><p><strong>Hạn sử dụng</strong> : 3 năm kể từ ngày sản xuất..</p><p><strong>Khối lượng</strong> : 15 gram.</p><p><strong>Thương Hiệu</strong> : Gamma</p>'
-                  // }
                   modules={modules}
                   formats={formats}
                 />
@@ -309,6 +299,7 @@ const TabProduct = () => {
                       )}
                       onChange={(e, value) => {
                         onChange(value)
+
                         return value
                       }}
                     />
@@ -335,6 +326,7 @@ const TabProduct = () => {
                       )}
                       onChange={(e, value) => {
                         onChange(value)
+
                         return value
                       }}
                     />
@@ -360,6 +352,7 @@ const TabProduct = () => {
                       )}
                       onChange={(e, value) => {
                         onChange(value)
+
                         return value
                       }}
                     />
