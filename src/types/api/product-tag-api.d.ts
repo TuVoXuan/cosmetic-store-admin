@@ -1,9 +1,12 @@
-declare interface ITag {
+declare interface ITag extends ICreateTag {
   _id: string
-  name: string
 }
 
-declare interface IUpdateTag {
+declare interface IUpdateTag extends ICreateTag {
   id: string
+}
+
+declare interface ICreateTag {
   name: string
+  weight: number
 }

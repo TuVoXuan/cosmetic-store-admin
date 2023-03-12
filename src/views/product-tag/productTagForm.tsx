@@ -11,10 +11,20 @@ import { useAppDispatch } from '../../store/configureStore'
 import { createTag, updateTag } from '../../redux/actions/tag-action'
 import { toast } from 'react-hot-toast'
 import { useTag } from '../../context/tag'
+import FormLabel from '@mui/material/FormLabel'
+import { Autocomplete, FormControl, InputLabel, MenuItem } from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import FormHelperText from '@mui/material/FormHelperText'
 
 interface FormValue {
   name: string
+  weight: IOption
 }
+
+const importances: IOption[] = [
+  { label: 'Normal', value: '1' },
+  { label: 'Importance', value: '3' }
+]
 
 export default function ProductTagForm() {
   const dispatch = useAppDispatch()
@@ -22,7 +32,8 @@ export default function ProductTagForm() {
 
   const { control, handleSubmit, reset, setValue } = useForm<FormValue>({
     defaultValues: {
-      name: ''
+      name: '',
+      weight: importances[0]
     }
   })
 
@@ -32,24 +43,29 @@ export default function ProductTagForm() {
         await dispatch(
           updateTag({
             id: selectedTag._id,
-            name: value.name
+            name: value.name,
+            weight: parseInt(value.weight.value)
           })
-        )
+        ).unwrap()
 
         toast.success('Update product tag success')
       } else {
-        await dispatch(createTag(value.name))
+        await dispatch(createTag({ name: value.name, weight: parseInt(value.weight.value) })).unwrap()
         toast.success('Create product tag success.')
       }
       reset()
     } catch (error) {
       console.log('error: ', error)
+      toast.error('Have some errors')
     }
   }
 
   useEffect(() => {
     if (selectedTag) {
       setValue('name', selectedTag.name)
+      setValue('weight', importances.find(item => item.value === selectedTag.weight.toString()) || importances[0])
+    } else {
+      reset()
     }
   }, [selectedTag])
 
@@ -77,7 +93,32 @@ export default function ProductTagForm() {
                 )}
               />
             </Grid>
+            <Grid item xs={12} lg={5}>
+              <Controller
+                name={'weight'}
+                rules={{ required: { value: true, message: `Weight is required` } }}
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <Autocomplete
+                    disablePortal
+                    id='weight'
+                    value={value}
+                    isOptionEqualToValue={(option, value) => option.value === value.value}
+                    defaultValue={importances.find(item => item.value === selectedTag?.weight.toString())}
+                    options={importances}
+                    sx={{ width: '100%' }}
+                    renderInput={params => (
+                      <TextField {...params} error={invalid} helperText={error?.message} label='Importance' />
+                    )}
+                    onChange={(e, value) => {
+                      onChange(value)
 
+                      return value
+                    }}
+                  />
+                )}
+              />
+            </Grid>
             <Grid item xs={12}>
               <Button type='submit' variant='contained' size='large'>
                 Submit

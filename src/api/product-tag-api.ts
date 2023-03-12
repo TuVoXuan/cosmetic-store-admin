@@ -12,11 +12,8 @@ export const tagApi = {
     return response
   },
 
-  create: async (name: string) => {
-    const response = await axiosService.post<IResponseSuccess<ITag>>(URL, {
-      name
-    })
-
+  create: async (body: ICreateTag) => {
+    const response = await axiosService.post<IResponseSuccess<ITag>>(URL, body)
     return response
   },
 

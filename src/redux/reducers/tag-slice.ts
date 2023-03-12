@@ -26,6 +26,7 @@ export const tagsSlice = createSlice({
 
       if (tag) {
         tag.name = action.payload.name
+        tag.weight = action.payload.weight
       }
     })
     builder.addCase(deleteTag.fulfilled, (state, action: PayloadAction<string>) => {
