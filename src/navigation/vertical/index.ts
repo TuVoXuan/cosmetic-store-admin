@@ -41,6 +41,11 @@ const navigation = (): VerticalNavItemsType => {
       path: '/product-tag'
     },
     {
+      title: 'Orders',
+      icon: HomeOutline,
+      path: '/orders'
+    },
+    {
       title: 'Account Settings',
       icon: AccountCogOutline,
       path: '/account-settings'

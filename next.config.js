@@ -6,6 +6,9 @@ module.exports = {
   env: {
     API_URL: process.env.API_URL
   },
+  images: {
+    domains: ['res.cloudinary.com']
+  },
   experimental: {
     esmExternals: false,
     jsconfigPaths: true // enables it for both jsconfig.json and tsconfig.json
