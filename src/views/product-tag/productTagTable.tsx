@@ -27,10 +27,11 @@ export default function ProductTagTable() {
 
   const handleDelete = async (id: string) => {
     try {
-      await dispatch(deleteTag(id))
+      await dispatch(deleteTag(id)).unwrap()
       toast.success('Delete product tag success')
     } catch (error) {
       console.log('error: ', error)
+      toast.error((error as IResponseError).error)
     }
   }
 
@@ -81,14 +82,20 @@ export default function ProductTagTable() {
 
   return (
     <Card>
-      <CardHeader title='Product Tags' />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <CardHeader title='Product Tags' titleTypographyProps={{ variant: 'h6' }} />
+        <Button
+          onClick={() => setSelectedTag(undefined)}
+          size='medium'
+          variant='contained'
+          type='submit'
+          sx={{ mr: 5 }}
+        >
+          Create Tag
+        </Button>
+      </Box>
       <TableContainer component={Paper}>
         <Table aria-label='simple table'>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-            </TableRow>
-          </TableHead>
           <TableBody>
             <TableRow>
               <TableCell sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>

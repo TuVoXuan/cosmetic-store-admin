@@ -11,9 +11,9 @@ export const getTags = createAsyncThunk('tags', async (body, thunkApi) => {
   }
 })
 
-export const createTag = createAsyncThunk('tags/create', async (name: string, thunkApi) => {
+export const createTag = createAsyncThunk('tags/create', async (body: ICreateTag, thunkApi) => {
   try {
-    const response = await tagApi.create(name)
+    const response = await tagApi.create(body)
 
     return response.data.data
   } catch (error) {
