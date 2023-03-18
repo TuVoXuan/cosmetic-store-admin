@@ -1,15 +1,12 @@
 // ** React Imports
-import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react'
+import { MouseEvent, ReactNode, useState } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import Typography from '@mui/material/Typography'
@@ -20,29 +17,20 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
-import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import FormHelperText from '@mui/material/FormHelperText'
 
-// ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
-// ** Configs
-import themeConfig from 'src/configs/themeConfig'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
-
-interface State {
-  password: string
-  showPassword: boolean
-}
+import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+import { userApi } from '../../api/user-api'
+import { useRouter } from 'next/router'
 
 // ** Styled Components
 const Card = styled(MuiCard)<CardProps>(({ theme }) => ({
@@ -55,34 +43,45 @@ const LinkStyled = styled('a')(({ theme }) => ({
   color: theme.palette.primary.main
 }))
 
-const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
-  '& .MuiFormControlLabel-label': {
-    fontSize: '0.875rem',
-    color: theme.palette.text.secondary
-  }
-}))
+interface FormValue {
+  email: string
+  password: string
+}
 
 const LoginPage = () => {
-  // ** State
-  const [values, setValues] = useState<State>({
-    password: '',
-    showPassword: false
-  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  // ** Hook
+  const { control, handleSubmit } = useForm<FormValue>({
+    defaultValues: {
+      email: '',
+      password: ''
+    }
+  })
   const theme = useTheme()
   const router = useRouter()
 
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+    setShowPassword(value => !value)
   }
 
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+  }
+
+  const onSubmit = async (values: FormValue) => {
+    try {
+      setLoading(true)
+      await userApi.signIn({
+        email: values.email,
+        password: values.password
+      })
+      setLoading(false)
+      router.push('/')
+    } catch (error) {
+      setLoading(false)
+      toast.error((error as IResponseError).error)
+    }
   }
 
   return (
@@ -159,91 +158,92 @@ const LoginPage = () => {
                 fontSize: '1.5rem !important'
               }}
             >
-              {themeConfig.templateName}
+              Hygge
             </Typography>
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Welcome to {themeConfig.templateName}! 👋🏻
+              Chào mừng đến với Hygge!
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>Hãy điền thông tin tài khoản của bạn</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
-            <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
-              <OutlinedInput
-                label='Password'
-                value={values.password}
-                id='auth-login-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      aria-label='toggle password visibility'
-                    >
-                      {values.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                    </IconButton>
-                  </InputAdornment>
+          <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              name='email'
+              control={control}
+              rules={{
+                required: { value: true, message: 'Yêu cầu nhập email' },
+                pattern: {
+                  value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                  message: 'Email không Đúng định dạng'
                 }
+              }}
+              defaultValue={''}
+              render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                <TextField
+                  value={value}
+                  onChange={onChange}
+                  error={invalid}
+                  helperText={error?.message}
+                  autoFocus
+                  fullWidth
+                  id='email'
+                  label='Email'
+                  sx={{ marginBottom: 4 }}
+                />
+              )}
+            />
+            <FormControl fullWidth>
+              <InputLabel htmlFor='auth-login-password'>Mật khẩu</InputLabel>
+              <Controller
+                name='password'
+                defaultValue={''}
+                control={control}
+                rules={{ required: { value: true, message: 'Yêu cầu nhập mật khẩu' } }}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <>
+                    <OutlinedInput
+                      label='Mật khẩu'
+                      value={value}
+                      id='auth-login-password'
+                      onChange={onChange}
+                      error={invalid}
+                      type={showPassword ? 'text' : 'password'}
+                      endAdornment={
+                        <InputAdornment position='end'>
+                          <IconButton
+                            edge='end'
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            aria-label='toggle password visibility'
+                          >
+                            {showPassword ? <EyeOutline /> : <EyeOffOutline />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                    {invalid && <FormHelperText error={invalid}>{error?.message}</FormHelperText>}
+                  </>
+                )}
               />
             </FormControl>
             <Box
-              sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
+              sx={{ mb: 4, mt: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}
             >
-              <FormControlLabel control={<Checkbox />} label='Remember Me' />
               <Link passHref href='/'>
-                <LinkStyled onClick={e => e.preventDefault()}>Forgot Password?</LinkStyled>
+                <LinkStyled onClick={e => e.preventDefault()}>Quên mật khẩu?</LinkStyled>
               </Link>
             </Box>
             <Button
+              disabled={loading}
               fullWidth
               size='large'
+              type='submit'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
             >
-              Login
+              {loading ? 'Đang đăng nhâp...' : 'Đăng nhập'}
             </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Typography variant='body2' sx={{ marginRight: 2 }}>
-                New on our platform?
-              </Typography>
-              <Typography variant='body2'>
-                <Link passHref href='/pages/register'>
-                  <LinkStyled>Create an account</LinkStyled>
-                </Link>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
-              </Link>
-            </Box>
           </form>
         </CardContent>
       </Card>

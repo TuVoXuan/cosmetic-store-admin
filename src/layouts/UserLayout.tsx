@@ -2,7 +2,6 @@
 import { ReactNode } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
@@ -14,14 +13,13 @@ import VerticalLayout from 'src/@core/layouts/VerticalLayout'
 import VerticalNavItems from 'src/navigation/vertical'
 
 // ** Component Import
-import UpgradeToProButton from './components/UpgradeToProButton'
 import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 interface Props {
-  children: ReactNode
+  children: ReactNode | ReactNode[]
 }
 
 const UserLayout = ({ children }: Props) => {

@@ -22,6 +22,8 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import ProtectRoute from '../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -41,7 +43,11 @@ const TabName = styled('span')(({ theme }) => ({
   }
 }))
 
-const AccountSettings = () => {
+interface Props {
+  auth: string
+}
+
+const AccountSettings = ({ auth }: Props) => {
   // ** State
   const [value, setValue] = useState<string>('account')
 
@@ -50,54 +56,62 @@ const AccountSettings = () => {
   }
 
   return (
-    <Card>
-      <TabContext value={value}>
-        <TabList
-          onChange={handleChange}
-          aria-label='account-settings tabs'
-          sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
-        >
-          <Tab
-            value='account'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <AccountOutline />
-                <TabName>Account</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='security'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOpenOutline />
-                <TabName>Security</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='info'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <InformationOutline />
-                <TabName>Info</TabName>
-              </Box>
-            }
-          />
-        </TabList>
+    <ProtectRoute auth={auth}>
+      <Card>
+        <TabContext value={value}>
+          <TabList
+            onChange={handleChange}
+            aria-label='account-settings tabs'
+            sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
+          >
+            <Tab
+              value='account'
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <AccountOutline />
+                  <TabName>Account</TabName>
+                </Box>
+              }
+            />
+            <Tab
+              value='security'
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LockOpenOutline />
+                  <TabName>Security</TabName>
+                </Box>
+              }
+            />
+            <Tab
+              value='info'
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <InformationOutline />
+                  <TabName>Info</TabName>
+                </Box>
+              }
+            />
+          </TabList>
 
-        <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <TabSecurity />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo />
-        </TabPanel>
-      </TabContext>
-    </Card>
+          <TabPanel sx={{ p: 0 }} value='account'>
+            <TabAccount />
+          </TabPanel>
+          <TabPanel sx={{ p: 0 }} value='security'>
+            <TabSecurity />
+          </TabPanel>
+          <TabPanel sx={{ p: 0 }} value='info'>
+            <TabInfo />
+          </TabPanel>
+        </TabContext>
+      </Card>
+    </ProtectRoute>
   )
+}
+
+export const getServerSideProps = ({ req, res }: any) => {
+  const auth = getCookie('Authorization', { req, res }) || ''
+
+  return { props: { auth: auth } }
 }
 
 export default AccountSettings

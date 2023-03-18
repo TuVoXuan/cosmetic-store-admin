@@ -1,3 +1,5 @@
+import { OrderStatus } from '../types/enum'
+
 export const formatPrice = (price: number) => {
   return price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
 }
@@ -14,4 +16,22 @@ export const formatDate = (date: string) => {
     ' ' +
     [padTo2Digits(d.getHours()), padTo2Digits(d.getMinutes()), padTo2Digits(d.getSeconds())].join(':')
   )
+}
+
+export const translateOrderStatus = (status: OrderStatus) => {
+  switch (status) {
+    case OrderStatus.Pending:
+      return 'Đang giao hàng'
+    case OrderStatus.Completed:
+      return 'Đã giao'
+    case OrderStatus.Delivering:
+      return 'Đang giao hàng'
+    case OrderStatus.NotAcceptOrder:
+      return 'Không nhận hàng'
+    case OrderStatus.Cancelled:
+      return 'Đã hủy'
+
+    default:
+      return ''
+  }
 }

@@ -10,7 +10,6 @@ import TableRow from '@mui/material/TableRow'
 import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import TableContainer from '@mui/material/TableContainer'
 import { Button, Chip } from '@mui/material'
@@ -135,7 +134,7 @@ const Row = (props: { row: IProductTable }) => {
 
   return (
     <Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow>
         <TableCell>
           <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
             {open ? <ChevronUp /> : <ChevronDown />}

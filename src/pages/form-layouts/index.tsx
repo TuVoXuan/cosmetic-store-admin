@@ -12,26 +12,40 @@ import FormLayoutsAlignment from 'src/views/form-layouts/FormLayoutsAlignment'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import ProtectRoute from '../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
-const FormLayouts = () => {
+interface Props {
+  auth: string
+}
+
+const FormLayouts = ({ auth }: Props) => {
   return (
-    <DatePickerWrapper>
-      <Grid container spacing={6}>
-        <Grid item xs={12} md={6}>
-          <FormLayoutsBasic />
+    <ProtectRoute auth={auth}>
+      <DatePickerWrapper>
+        <Grid container spacing={6}>
+          <Grid item xs={12} md={6}>
+            <FormLayoutsBasic />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormLayoutsIcons />
+          </Grid>
+          <Grid item xs={12}>
+            <FormLayoutsSeparator />
+          </Grid>
+          <Grid item xs={12}>
+            <FormLayoutsAlignment />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <FormLayoutsIcons />
-        </Grid>
-        <Grid item xs={12}>
-          <FormLayoutsSeparator />
-        </Grid>
-        <Grid item xs={12}>
-          <FormLayoutsAlignment />
-        </Grid>
-      </Grid>
-    </DatePickerWrapper>
+      </DatePickerWrapper>
+    </ProtectRoute>
   )
+}
+
+export const getServerSideProps = ({ req, res }: any) => {
+  const auth = getCookie('Authorization', { req, res }) || ''
+
+  return { props: { auth: auth } }
 }
 
 export default FormLayouts

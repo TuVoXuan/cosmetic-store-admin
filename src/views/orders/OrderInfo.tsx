@@ -12,9 +12,10 @@ interface Props {
   date: string
   shippingFee: number
   productValue: number
+  status: string
 }
 
-export default function OrderInfo({ orderId, date, shippingFee, productValue }: Props) {
+export default function OrderInfo({ orderId, date, shippingFee, productValue, status }: Props) {
   return (
     <Card>
       <CardHeader title={'Thông tin đơn hàng'} titleTypographyProps={{ variant: 'h6' }} />
@@ -34,6 +35,14 @@ export default function OrderInfo({ orderId, date, shippingFee, productValue }: 
           <Grid item xs={6}>
             <Typography color='text.secondary' sx={{ fontWeight: 500 }} align='right' variant='subtitle1'>
               {formatDate(date)}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography color='text.secondary'>Trạng thái</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography color='text.secondary' sx={{ fontWeight: 500 }} align='right' variant='subtitle1'>
+              {status}
             </Typography>
           </Grid>
 

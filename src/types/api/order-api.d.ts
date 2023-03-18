@@ -27,10 +27,11 @@ declare interface IPagePagination<T> {
 
 declare interface IOrderItem {
   _id: string
-  name: ITranslate[]
+  name: string
   quantity: number
   price: number
   thumbnail: string
+  configurations: string[]
 }
 
 declare interface ICoordinates {
@@ -58,6 +59,7 @@ declare interface IOrderDetail {
   shippingFee: number
   address: IAddress
   orderItems: IOrderItem[]
+  status: OrderStatus
 }
 
 declare interface IUpdateOrderStatus {

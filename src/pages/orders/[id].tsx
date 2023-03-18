@@ -6,8 +6,16 @@ import Grid from '@mui/material/Grid'
 import OrderInfo from '../../views/orders/OrderInfo'
 import DeliveryInfo from '../../views/orders/DeliveryInfo'
 import ProductsInfo from '../../views/orders/ProductsInfo'
+import { translateOrderStatus } from '../../util/convert'
+import ProtectRoute from '../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
+import { toast } from 'react-hot-toast'
 
-export default function OrderDetail() {
+interface Props {
+  auth: string
+}
+
+export default function OrderDetail({ auth }: Props) {
   const router = useRouter()
   const { id } = router.query
 
@@ -15,9 +23,13 @@ export default function OrderDetail() {
 
   const fetchOrder = async () => {
     if (id) {
-      const data = await orderApi.getOrderDetail(id as string)
+      try {
+        const data = await orderApi.getOrderDetail(id as string)
 
-      setOrder(data)
+        setOrder(data)
+      } catch (error) {
+        toast.error('Không thể lấy thông tin đơn hàng')
+      }
     }
   }
 
@@ -26,7 +38,7 @@ export default function OrderDetail() {
   }, [id])
 
   return (
-    <>
+    <ProtectRoute auth={auth}>
       <Grid container spacing={6}>
         {order && (
           <>
@@ -35,6 +47,7 @@ export default function OrderDetail() {
                 orderId={order.orderId}
                 date={order.date}
                 shippingFee={order.shippingFee}
+                status={translateOrderStatus(order.status)}
                 productValue={order.orderItems.reduce((prev, curr) => prev + curr.price * curr.quantity, 0)}
               />
             </Grid>
@@ -47,6 +60,11 @@ export default function OrderDetail() {
           </>
         )}
       </Grid>
-    </>
+    </ProtectRoute>
   )
+}
+export const getServerSideProps = ({ req, res }: any) => {
+  const auth = getCookie('Authorization', { req, res }) || ''
+
+  return { props: { auth: auth } }
 }

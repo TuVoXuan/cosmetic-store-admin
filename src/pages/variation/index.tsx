@@ -4,8 +4,14 @@ import VariantTable from '../../views/variation/variantTable'
 import CreateVariationForm from '../../views/variation/createVariationForm'
 import { VariationProvider } from '../../context/variation'
 import AddOptionsForm from '../../views/variation/addOptionForm'
+import ProtectRoute from '../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
-export default function Variation() {
+interface Props {
+  auth: string
+}
+
+export default function Variation({ auth }: Props) {
   const [tab, setTab] = useState<'create' | 'add-options' | 'update'>('create')
   const CreateFormRef = useRef<HTMLDivElement>(null)
   const AddOptionsFormRef = useRef<HTMLDivElement>(null)
@@ -27,22 +33,29 @@ export default function Variation() {
   }, [tab])
 
   return (
-    <VariationProvider setTab={setTab}>
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <VariantTable />
+    <ProtectRoute auth={auth}>
+      <VariationProvider setTab={setTab}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <VariantTable />
+          </Grid>
+          {tab === 'create' && (
+            <Grid ref={CreateFormRef} item xs={12}>
+              <CreateVariationForm />
+            </Grid>
+          )}
+          {tab === 'add-options' && (
+            <Grid ref={AddOptionsFormRef} item xs={12}>
+              <AddOptionsForm />
+            </Grid>
+          )}
         </Grid>
-        {tab === 'create' && (
-          <Grid ref={CreateFormRef} item xs={12}>
-            <CreateVariationForm />
-          </Grid>
-        )}
-        {tab === 'add-options' && (
-          <Grid ref={AddOptionsFormRef} item xs={12}>
-            <AddOptionsForm />
-          </Grid>
-        )}
-      </Grid>
-    </VariationProvider>
+      </VariationProvider>
+    </ProtectRoute>
   )
+}
+export const getServerSideProps = ({ req, res }: any) => {
+  const auth = getCookie('Authorization', { req, res }) || ''
+
+  return { props: { auth: auth } }
 }

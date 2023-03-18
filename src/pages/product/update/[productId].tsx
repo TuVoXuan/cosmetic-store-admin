@@ -1,5 +1,4 @@
 // ** React import
-import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import brandApi from '../../../api/brand-api'
@@ -20,6 +19,8 @@ import { Autocomplete, Card, CardHeader, FormHelperText, FormLabel } from '@mui/
 import 'react-quill/dist/quill.snow.css'
 import { useRouter } from 'next/router'
 import { updateProduct } from '../../../redux/actions/product-action'
+import ProtectRoute from '../../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
 interface FormValue {
   nameVi: string
@@ -34,6 +35,7 @@ interface Props {
   product: IProductSimPle
   categories: IOption[]
   brands: IOption[]
+  auth: string
 }
 
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
@@ -44,6 +46,7 @@ const QuillNoSSRWrapper = dynamic(import('react-quill'), {
 export const getServerSideProps = async (context: any) => {
   const productId = context.query.productId as string
   const resProduct = await productApi.getProductById(productId)
+  const auth = getCookie('Authorization', { req: context.req, res: context.res })
 
   // fetch brands
   const resBrand = await brandApi.getBrand()
@@ -62,18 +65,21 @@ export const getServerSideProps = async (context: any) => {
         }
       }
     }
+
     return option
   })
+
   return {
     props: {
       product: resProduct.data.data,
       categories,
-      brands
+      brands,
+      auth
     }
   }
 }
 
-function UpdateProduct({ brands, categories, product }: Props) {
+function UpdateProduct({ brands, categories, product, auth }: Props) {
   const router = useRouter()
   const productId = router.query.productId as string
 
@@ -135,10 +141,7 @@ function UpdateProduct({ brands, categories, product }: Props) {
     'script',
     'header',
     'blockquote',
-    // "code-block",
-    // "indent",
     'list',
-    // "direction",
     'align',
     'link',
     'image',
@@ -185,146 +188,150 @@ function UpdateProduct({ brands, categories, product }: Props) {
   }
 
   return (
-    <Card>
-      <CardHeader title='Update Product' titleTypographyProps={{ variant: 'h6' }} />
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={7}>
-            <Grid item xs={12} sm={6}>
-              <Controller
-                name={'nameVi'}
-                defaultValue={''}
-                rules={{ required: { value: true, message: 'Name (vi) is required' } }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <TextField
-                    error={invalid}
-                    helperText={error?.message}
-                    fullWidth
-                    label='Name (vi)'
-                    placeholder='Kem chống nắng'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <Controller
-                name={'nameEn'}
-                defaultValue={''}
-                rules={{ required: { value: true, message: 'Name (en) is required' } }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <TextField
-                    error={invalid}
-                    helperText={error?.message}
-                    fullWidth
-                    label='Name (en)'
-                    placeholder='Sun care'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth color='error'>
-                <FormLabel error={errors.desVi?.message ? true : false}>Description (vi)</FormLabel>
-                <QuillNoSSRWrapper
-                  onChange={value => {
-                    setValue('desVi', value)
-                  }}
-                  theme='snow'
-                  defaultValue={product.description.find(des => des.language === 'vi')?.value || undefined}
-                  modules={modules}
-                  formats={formats}
-                />
-                {errors.desVi?.message && <FormHelperText error>{errors.desVi.message}</FormHelperText>}
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel error={errors.desEn?.message ? true : false}>Description (en)</FormLabel>
-                <QuillNoSSRWrapper
-                  onChange={value => {
-                    setValue('desEn', value)
-                  }}
-                  theme='snow'
-                  defaultValue={product.description.find(des => des.language === 'en')?.value || undefined}
-                  modules={modules}
-                  formats={formats}
-                />
-                {errors.desEn?.message && <FormHelperText error>{errors.desEn.message}</FormHelperText>}
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
+    <ProtectRoute auth={auth}>
+      <Card>
+        <CardHeader title='Update Product' titleTypographyProps={{ variant: 'h6' }} />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={7}>
+              <Grid item xs={12} sm={6}>
                 <Controller
-                  name={'brand'}
-                  rules={{ required: { value: true, message: 'Brand is required' } }}
+                  name={'nameVi'}
+                  defaultValue={''}
+                  rules={{ required: { value: true, message: 'Name (vi) is required' } }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                    <Autocomplete
-                      disablePortal
-                      id='brand'
-                      defaultValue={brands.find(item => item.value === product?.brand)}
-                      options={brands}
-                      sx={{ width: '100%' }}
-                      renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Brand' />
-                      )}
-                      onChange={(e, value) => {
-                        onChange(value)
-                        return value
-                      }}
+                    <TextField
+                      error={invalid}
+                      helperText={error?.message}
+                      fullWidth
+                      label='Name (vi)'
+                      placeholder='Kem chống nắng'
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
-              </FormControl>
-            </Grid>
+              </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
+              <Grid item xs={12} sm={6}>
                 <Controller
-                  name={'category'}
-                  rules={{ required: { value: true, message: 'Category is required' } }}
+                  name={'nameEn'}
+                  defaultValue={''}
+                  rules={{ required: { value: true, message: 'Name (en) is required' } }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                    <Autocomplete
-                      disablePortal
-                      id='category'
-                      defaultValue={product?.categories.map(item => {
-                        return categories.find(cate => cate.value === item)
-                      })}
-                      multiple
-                      options={categories}
-                      sx={{ width: '100%' }}
-                      renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Category' />
-                      )}
-                      onChange={(e, value) => {
-                        onChange(value)
-                        return value
-                      }}
+                    <TextField
+                      error={invalid}
+                      helperText={error?.message}
+                      fullWidth
+                      label='Name (en)'
+                      placeholder='Sun care'
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
-              </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth color='error'>
+                  <FormLabel error={errors.desVi?.message ? true : false}>Description (vi)</FormLabel>
+                  <QuillNoSSRWrapper
+                    onChange={value => {
+                      setValue('desVi', value)
+                    }}
+                    theme='snow'
+                    defaultValue={product.description.find(des => des.language === 'vi')?.value || undefined}
+                    modules={modules}
+                    formats={formats}
+                  />
+                  {errors.desVi?.message && <FormHelperText error>{errors.desVi.message}</FormHelperText>}
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <FormLabel error={errors.desEn?.message ? true : false}>Description (en)</FormLabel>
+                  <QuillNoSSRWrapper
+                    onChange={value => {
+                      setValue('desEn', value)
+                    }}
+                    theme='snow'
+                    defaultValue={product.description.find(des => des.language === 'en')?.value || undefined}
+                    modules={modules}
+                    formats={formats}
+                  />
+                  {errors.desEn?.message && <FormHelperText error>{errors.desEn.message}</FormHelperText>}
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name={'brand'}
+                    rules={{ required: { value: true, message: 'Brand is required' } }}
+                    control={control}
+                    render={({ field: { onChange }, fieldState: { error, invalid } }) => (
+                      <Autocomplete
+                        disablePortal
+                        id='brand'
+                        defaultValue={brands.find(item => item.value === product?.brand)}
+                        options={brands}
+                        sx={{ width: '100%' }}
+                        renderInput={params => (
+                          <TextField {...params} error={invalid} helperText={error?.message} label='Brand' />
+                        )}
+                        onChange={(e, value) => {
+                          onChange(value)
+
+                          return value
+                        }}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <Controller
+                    name={'category'}
+                    rules={{ required: { value: true, message: 'Category is required' } }}
+                    control={control}
+                    render={({ field: { onChange }, fieldState: { error, invalid } }) => (
+                      <Autocomplete
+                        disablePortal
+                        id='category'
+                        defaultValue={product?.categories.map(item => {
+                          return categories.find(cate => cate.value === item)
+                        })}
+                        multiple
+                        options={categories}
+                        sx={{ width: '100%' }}
+                        renderInput={params => (
+                          <TextField {...params} error={invalid} helperText={error?.message} label='Category' />
+                        )}
+                        onChange={(e, value) => {
+                          onChange(value)
+
+                          return value
+                        }}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant='contained' type='submit'>
+                  submit
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Button variant='contained' type='submit'>
-                submit
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+    </ProtectRoute>
   )
 }
 

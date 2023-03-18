@@ -30,7 +30,7 @@ export const orderApi = {
   },
 
   getOrderDetail: async (id: string) => {
-    const response = await axiosService.get<IResponseSuccess<IOrderDetail>>(`${URL}/dashboard/detail/${id}`)
+    const response = await axiosService.get<IResponseSuccess<IOrderDetail>>(`${URL}/detail/${id}`)
 
     return response.data.data
   },

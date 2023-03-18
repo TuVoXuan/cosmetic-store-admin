@@ -10,3 +10,14 @@ export enum OrderStatus {
   Cancelled = 'cancelled',
   NotAcceptOrder = 'notAcceptOrder'
 }
+
+export enum Gender {
+  Male = 'male',
+  Female = 'female',
+  Other = 'other'
+}
+
+export enum AdminRole {
+  Main = 'main',
+  Secondary = 'secondary'
+}

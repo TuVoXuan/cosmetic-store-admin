@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,6 +20,8 @@ import TabProductItem from '../../views/prodcut/TabProductItem'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import ProtectRoute from '../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -39,7 +41,11 @@ const TabName = styled('span')(({ theme }) => ({
   }
 }))
 
-const CreateProduct = () => {
+interface Props {
+  auth: string
+}
+
+const CreateProduct = ({ auth }: Props) => {
   // ** State
   const [value, setValue] = useState<string>('product')
 
@@ -48,42 +54,50 @@ const CreateProduct = () => {
   }
 
   return (
-    <Card>
-      <TabContext value={value}>
-        <TabList
-          onChange={handleChange}
-          aria-label='product tabs'
-          sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
-        >
-          <Tab
-            value='product'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Inventory2OutlinedIcon />
-                <TabName>Product</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='productItem'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <WidgetsOutlinedIcon />
-                <TabName>Product Item</TabName>
-              </Box>
-            }
-          />
-        </TabList>
+    <ProtectRoute auth={auth}>
+      <Card>
+        <TabContext value={value}>
+          <TabList
+            onChange={handleChange}
+            aria-label='product tabs'
+            sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
+          >
+            <Tab
+              value='product'
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Inventory2OutlinedIcon />
+                  <TabName>Product</TabName>
+                </Box>
+              }
+            />
+            <Tab
+              value='productItem'
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <WidgetsOutlinedIcon />
+                  <TabName>Product Item</TabName>
+                </Box>
+              }
+            />
+          </TabList>
 
-        <TabPanel sx={{ p: 0 }} value='product'>
-          <TabProduct />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='productItem'>
-          <TabProductItem />
-        </TabPanel>
-      </TabContext>
-    </Card>
+          <TabPanel sx={{ p: 0 }} value='product'>
+            <TabProduct />
+          </TabPanel>
+          <TabPanel sx={{ p: 0 }} value='productItem'>
+            <TabProductItem />
+          </TabPanel>
+        </TabContext>
+      </Card>
+    </ProtectRoute>
   )
+}
+
+export const getServerSideProps = ({ req, res }: any) => {
+  const auth = getCookie('Authorization', { req, res }) || ''
+
+  return { props: { auth: auth } }
 }
 
 export default CreateProduct

@@ -60,6 +60,8 @@ import AccountDetailsOutline from 'mdi-material-ui/AccountDetailsOutline'
 import AccountArrowLeftOutline from 'mdi-material-ui/AccountArrowLeftOutline'
 import AccountArrowRightOutline from 'mdi-material-ui/AccountArrowRightOutline'
 import AccountBoxMultipleOutline from 'mdi-material-ui/AccountBoxMultipleOutline'
+import ProtectRoute from '../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
 const icons = {
   Abacus,
@@ -112,7 +114,11 @@ const icons = {
   AccountBoxMultipleOutline
 }
 
-const Icons = () => {
+interface Props {
+  auth: string
+}
+
+const Icons = ({ auth }: Props) => {
   const renderIconGrids = () => {
     return Object.keys(icons).map(key => {
       const IconTag = icons[key as keyof typeof icons]
@@ -132,33 +138,41 @@ const Icons = () => {
   }
 
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Typography variant='h5'>
-          <Link href='https://materialdesignicons.com/' target='_blank'>
-            Material Design Icons
-          </Link>
-        </Typography>
-        <Typography variant='body2'>Material Design Icons from the Community</Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container spacing={6}>
-          {renderIconGrids()}
+    <ProtectRoute auth={auth}>
+      <Grid container spacing={6}>
+        <Grid item xs={12}>
+          <Typography variant='h5'>
+            <Link href='https://materialdesignicons.com/' target='_blank'>
+              Material Design Icons
+            </Link>
+          </Typography>
+          <Typography variant='body2'>Material Design Icons from the Community</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Grid container spacing={6}>
+            {renderIconGrids()}
+          </Grid>
+        </Grid>
+        <Grid item xs={12} sx={{ textAlign: 'center' }}>
+          <Button
+            target='_blank'
+            rel='noreferrer'
+            component={Link}
+            variant='contained'
+            href='https://materialdesignicons.com/'
+          >
+            View All Material Design Icons
+          </Button>
         </Grid>
       </Grid>
-      <Grid item xs={12} sx={{ textAlign: 'center' }}>
-        <Button
-          target='_blank'
-          rel='noreferrer'
-          component={Link}
-          variant='contained'
-          href='https://materialdesignicons.com/'
-        >
-          View All Material Design Icons
-        </Button>
-      </Grid>
-    </Grid>
+    </ProtectRoute>
   )
+}
+
+export const getServerSideProps = ({ req, res }: any) => {
+  const auth = getCookie('Authorization', { req, res }) || ''
+
+  return { props: { auth: auth } }
 }
 
 export default Icons

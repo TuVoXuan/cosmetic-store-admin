@@ -19,6 +19,8 @@ import variationApi from '../../../../api/variation-api'
 import { useAppDispatch } from '../../../../store/configureStore'
 import { updateProdItem } from '../../../../redux/actions/product-action'
 import { tagApi } from '../../../../api/product-tag-api'
+import ProtectRoute from '../../../../layouts/components/ProtectRoute'
+import { getCookie } from 'cookies-next'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -58,11 +60,13 @@ interface Props {
   prodItem: IProdtem
   optionsGroup: IVariationGroup[]
   tags: IOption[]
+  auth: string
 }
 
 export const getServerSideProps = async (context: any) => {
   const productId = context.query.productId as string
   const itemId = context.query.itemId as string
+  const auth = getCookie('Authorization', { req: context.req, res: context.res })
 
   // fetch product item and variation
   const resProdItem = await productApi.getProductItem(productId, itemId)
@@ -104,12 +108,13 @@ export const getServerSideProps = async (context: any) => {
       productId,
       prodItem,
       optionsGroup,
-      tags: tags.data.data.map(item => ({ label: item.name, value: item._id }))
+      tags: tags.data.data.map(item => ({ label: item.name, value: item._id })),
+      auth: auth
     }
   }
 }
 
-function UpdateProductItem({ optionsGroup, prodItem, productId, tags }: Props) {
+function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Props) {
   // ** State
   const [thumbnailFile, setThumbnailFile] = useState<File>()
   const [thumbnail, setThumbnail] = useState<string>(prodItem.thumbnail)
@@ -206,180 +211,152 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags }: Props) {
   }, [])
 
   return (
-    <Card>
-      <CardHeader title='Update Product Item' titleTypographyProps={{ variant: 'h6' }} />
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={7}>
-            <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
-              <FormLabel style={{ fontWeight: 500 }} error={errors.thumbnail?.message ? true : false}>
-                Product thumbnail
-              </FormLabel>
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 4 }}>
-                <ImgStyled src={thumbnail} alt='Profile Pic' />
-                <Box>
-                  <ButtonStyled component='label' variant='contained' htmlFor='thumbnail-upload-image'>
-                    Upload Thumbnail
-                    <input
-                      {...register('thumbnail')}
-                      hidden
-                      type='file'
-                      onChange={e => {
-                        onChangeThumbnail(e)
+    <ProtectRoute auth={auth}>
+      <Card>
+        <CardHeader title='Update Product Item' titleTypographyProps={{ variant: 'h6' }} />
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={7}>
+              <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
+                <FormLabel style={{ fontWeight: 500 }} error={errors.thumbnail?.message ? true : false}>
+                  Product thumbnail
+                </FormLabel>
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 4 }}>
+                  <ImgStyled src={thumbnail} alt='Profile Pic' />
+                  <Box>
+                    <ButtonStyled component='label' variant='contained' htmlFor='thumbnail-upload-image'>
+                      Upload Thumbnail
+                      <input
+                        {...register('thumbnail')}
+                        hidden
+                        type='file'
+                        onChange={e => {
+                          onChangeThumbnail(e)
+                        }}
+                        accept='image/png, image/jpeg'
+                        id='thumbnail-upload-image'
+                      />
+                    </ButtonStyled>
+                    <ResetButtonStyled
+                      color='error'
+                      variant='outlined'
+                      onClick={() => {
+                        setValue('thumbnail', undefined)
+                        setThumbnail('/images/avatars/1.png')
                       }}
-                      accept='image/png, image/jpeg'
-                      id='thumbnail-upload-image'
-                    />
-                  </ButtonStyled>
-                  <ResetButtonStyled
-                    color='error'
-                    variant='outlined'
-                    onClick={() => {
-                      setValue('thumbnail', undefined)
-                      setThumbnail('/images/avatars/1.png')
-                    }}
-                  >
-                    Reset
-                  </ResetButtonStyled>
-                  <Typography variant='body2' sx={{ marginTop: 5 }}>
-                    Allowed PNG or JPEG. Max size of 800K.
-                  </Typography>
+                    >
+                      Reset
+                    </ResetButtonStyled>
+                    <Typography variant='body2' sx={{ marginTop: 5 }}>
+                      Allowed PNG or JPEG. Max size of 800K.
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
+              </Grid>
 
-            <Grid item xs={12}>
-              <FormLabel style={{ fontWeight: 500 }} error={errors.images?.message ? true : false}>
-                Product images
-              </FormLabel>
-              <Box sx={{ marginTop: 4 }}>
-                {imgSrc.map((img, index) => (
-                  <ImgStyled key={index} src={img} alt='Product item' />
-                ))}
-                <Box sx={{ mt: 4 }}>
-                  <ButtonStyled component='label' variant='contained' htmlFor='products-upload-image'>
-                    Upload product images
-                    <input
-                      hidden
-                      {...register('images')}
-                      type='file'
-                      multiple
-                      onChange={e => {
-                        onChangeImgs(e)
+              <Grid item xs={12}>
+                <FormLabel style={{ fontWeight: 500 }} error={errors.images?.message ? true : false}>
+                  Product images
+                </FormLabel>
+                <Box sx={{ marginTop: 4 }}>
+                  {imgSrc.map((img, index) => (
+                    <ImgStyled key={index} src={img} alt='Product item' />
+                  ))}
+                  <Box sx={{ mt: 4 }}>
+                    <ButtonStyled component='label' variant='contained' htmlFor='products-upload-image'>
+                      Upload product images
+                      <input
+                        hidden
+                        {...register('images')}
+                        type='file'
+                        multiple
+                        onChange={e => {
+                          onChangeImgs(e)
+                        }}
+                        accept='image/png, image/jpeg'
+                        id='products-upload-image'
+                      />
+                    </ButtonStyled>
+                    <ResetButtonStyled
+                      color='error'
+                      variant='outlined'
+                      onClick={() => {
+                        setValue('images', undefined)
+                        setImgSrc(['/images/avatars/1.png'])
                       }}
-                      accept='image/png, image/jpeg'
-                      id='products-upload-image'
-                    />
-                  </ButtonStyled>
-                  <ResetButtonStyled
-                    color='error'
-                    variant='outlined'
-                    onClick={() => {
-                      setValue('images', undefined)
-                      setImgSrc(['/images/avatars/1.png'])
-                    }}
-                  >
-                    Reset
-                  </ResetButtonStyled>
-                  <Typography variant='body2' sx={{ marginTop: 5 }}>
-                    Allowed PNG or JPEG. Max size of 800K.
-                  </Typography>
+                    >
+                      Reset
+                    </ResetButtonStyled>
+                    <Typography variant='body2' sx={{ marginTop: 5 }}>
+                      Allowed PNG or JPEG. Max size of 800K.
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
+              </Grid>
 
-            <Grid item xs={12} sm={6}>
-              <Controller
-                name={'price'}
-                defaultValue={0}
-                rules={{
-                  required: { value: true, message: 'Price is required' },
-                  min: { value: 1000, message: 'Price must be greate than 1000' }
-                }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <TextField
-                    fullWidth
-                    error={invalid}
-                    helperText={error?.message}
-                    label='Price'
-                    InputProps={{
-                      startAdornment: <InputAdornment position='start'>VND</InputAdornment>
-                    }}
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <Controller
-                name={'quantity'}
-                defaultValue={0}
-                rules={{
-                  required: { value: true, message: 'Quantity is required' },
-                  min: { value: 1, message: 'Price must be greate than 1' }
-                }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <TextField
-                    fullWidth
-                    error={invalid}
-                    helperText={error?.message}
-                    label='Quantity'
-                    value={value}
-                    onChange={onChange}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <Controller
-                name={'tags'}
-                rules={{ required: { value: true, message: `Tags is required` } }}
-                control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                  <Autocomplete
-                    disablePortal
-                    multiple
-                    isOptionEqualToValue={(option, value) => option.value === value.value}
-                    defaultValue={tags.filter(item => prodItem.tags.includes(item.value))}
-                    id={'tags'}
-                    options={tags}
-                    sx={{ width: '100%' }}
-                    renderInput={params => (
-                      <TextField {...params} error={invalid} helperText={error?.message} label={'Tags'} />
-                    )}
-                    onChange={(e, value) => {
-                      onChange(value)
-
-                      return value
-                    }}
-                  />
-                )}
-              />
-            </Grid>
-
-            {optionsGroup.map(item => (
-              <Grid item xs={12} sm={6} key={item.variationName}>
+              <Grid item xs={12} sm={6}>
                 <Controller
-                  name={item.variationName}
-                  rules={{ required: { value: true, message: `${item.variationName} is required` } }}
+                  name={'price'}
+                  defaultValue={0}
+                  rules={{
+                    required: { value: true, message: 'Price is required' },
+                    min: { value: 1000, message: 'Price must be greate than 1000' }
+                  }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                    <TextField
+                      fullWidth
+                      error={invalid}
+                      helperText={error?.message}
+                      label='Price'
+                      InputProps={{
+                        startAdornment: <InputAdornment position='start'>VND</InputAdornment>
+                      }}
+                      value={value}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name={'quantity'}
+                  defaultValue={0}
+                  rules={{
+                    required: { value: true, message: 'Quantity is required' },
+                    min: { value: 1, message: 'Price must be greate than 1' }
+                  }}
+                  control={control}
+                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                    <TextField
+                      fullWidth
+                      error={invalid}
+                      helperText={error?.message}
+                      label='Quantity'
+                      value={value}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name={'tags'}
+                  rules={{ required: { value: true, message: `Tags is required` } }}
+                  control={control}
+                  render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                     <Autocomplete
                       disablePortal
+                      multiple
                       isOptionEqualToValue={(option, value) => option.value === value.value}
-                      defaultValue={item.variationOptions.find(
-                        op => prodItem.productConfigurations.findIndex(prodConfig => prodConfig === op.value) > -1
-                      )}
-                      id={item.variationName}
-                      options={item.variationOptions}
+                      defaultValue={tags.filter(item => prodItem.tags.includes(item.value))}
+                      id={'tags'}
+                      options={tags}
                       sx={{ width: '100%' }}
                       renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label={item.variationName} />
+                        <TextField {...params} error={invalid} helperText={error?.message} label={'Tags'} />
                       )}
                       onChange={(e, value) => {
                         onChange(value)
@@ -390,17 +367,52 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags }: Props) {
                   )}
                 />
               </Grid>
-            ))}
 
-            <Grid item xs={12}>
-              <Button variant='contained' type='submit' sx={{ marginRight: 3.5 }}>
-                Save
-              </Button>
+              {optionsGroup.map(item => (
+                <Grid item xs={12} sm={6} key={item.variationName}>
+                  <Controller
+                    name={item.variationName}
+                    rules={{ required: { value: true, message: `${item.variationName} is required` } }}
+                    control={control}
+                    render={({ field: { onChange }, fieldState: { error, invalid } }) => (
+                      <Autocomplete
+                        disablePortal
+                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                        defaultValue={item.variationOptions.find(
+                          op => prodItem.productConfigurations.findIndex(prodConfig => prodConfig === op.value) > -1
+                        )}
+                        id={item.variationName}
+                        options={item.variationOptions}
+                        sx={{ width: '100%' }}
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            error={invalid}
+                            helperText={error?.message}
+                            label={item.variationName}
+                          />
+                        )}
+                        onChange={(e, value) => {
+                          onChange(value)
+
+                          return value
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+
+              <Grid item xs={12}>
+                <Button variant='contained' type='submit' sx={{ marginRight: 3.5 }}>
+                  Save
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+    </ProtectRoute>
   )
 }
 
