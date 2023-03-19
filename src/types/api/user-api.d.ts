@@ -16,3 +16,10 @@ declare interface IUser {
   gender: Gender
   role: AdminRole
 }
+
+declare type UpdateUser = Pick<IUser, 'name' | 'birthday' | 'gender'>
+
+declare type ChangePass = {
+  oldPass: string
+  newPass: string
+}

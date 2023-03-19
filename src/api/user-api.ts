@@ -19,5 +19,17 @@ export const userApi = {
     const response = await axiosService.get<IResponseSuccess<IUser>>(URL)
 
     return response
+  },
+
+  updateInfo: async (body: UpdateUser) => {
+    const response = await axiosService.put<IResponseSuccess<IUser>>(URL, body)
+
+    return response
+  },
+
+  changePass: async (body: ChangePass) => {
+    const response = await axiosService.put<IResponseSuccess<string>>(`${URL}/change-pass`, body)
+
+    return response.data.data
   }
 }

@@ -30,13 +30,11 @@ export default function ProtectRoute({ children, auth }: Props) {
     if (!auth) {
       router.push('/login')
     }
-  }, [])
 
-  useEffect(() => {
     if (auth && user && !user._id) {
       fetchUserInfo()
     }
-  }, [user])
+  }, [])
 
   if (!auth) {
     return (

@@ -22,6 +22,9 @@ import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
+import { useAppDispatch } from '../../../../store/configureStore'
+import { logout } from '../../../../redux/actions/user-action'
+import { deleteCookie } from 'cookies-next'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -38,6 +41,7 @@ const UserDropdown = () => {
 
   // ** Hooks
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
     setAnchorEl(event.currentTarget)
@@ -62,6 +66,12 @@ const UserDropdown = () => {
       fontSize: '1.375rem',
       color: 'text.secondary'
     }
+  }
+
+  const handleLogout = async () => {
+    deleteCookie('Authorization')
+    router.push('/login')
+    await dispatch(logout())
   }
 
   return (
@@ -144,7 +154,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

@@ -20,3 +20,21 @@ export const getInfo = createAsyncThunk('user/info', async (_body, thunkAPI) => 
     return thunkAPI.rejectWithValue(error)
   }
 })
+
+export const updateInfo = createAsyncThunk('user/info/update', async (body: UpdateUser, thunkAPI) => {
+  try {
+    const response = await userApi.updateInfo(body)
+
+    return response.data.data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error)
+  }
+})
+
+export const logout = createAsyncThunk('user/logout', async (_body, thunkAPI) => {
+  try {
+    return 'logout'
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error)
+  }
+})

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
 import { AdminRole, Gender } from '../../types/enum'
-import { getInfo, signIn } from '../actions/user-action'
+import { getInfo, signIn, updateInfo } from '../actions/user-action'
 
 const initialState: IUser = {
   _id: '',
@@ -31,6 +31,13 @@ export const userSlice = createSlice({
       state.gender = gender
       state.name = name
       state.role = role
+    })
+    builder.addCase(updateInfo.fulfilled, (state, action: PayloadAction<IUser>) => {
+      const { birthday, gender, name } = action.payload
+
+      state.birthday = birthday
+      state.gender = gender
+      state.name = name
     })
   }
 })
