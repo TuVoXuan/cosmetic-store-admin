@@ -1,3 +1,4 @@
+import { IPagePagination, IPagePaginationParam } from '../types/api/order-api'
 import axiosService from './axios-service'
 
 const API = process.env.API_URL
@@ -14,8 +15,10 @@ const productApi = {
     return axiosService.get<IResponseSuccess<IProductNameRes[]>>(`${URL}/list-name`)
   },
 
-  getProductTable: () => {
-    return axiosService.get<IResponseSuccess<IProductTable[]>>(`${URL}/dashboard`)
+  getProductTable: (param: IPagePaginationParam) => {
+    const newURL = `${URL}/dashboard?page=${param.page}&limit=${param.limit}`
+
+    return axiosService.get<IResponseSuccess<IPagePagination<IProductTable[]>>>(newURL)
   },
 
   createProductItem: (body: FormData) => {

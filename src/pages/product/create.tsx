@@ -15,8 +15,8 @@ import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
 
 // ** Tab import
-import TabProduct from '../../views/prodcut/TabProduct'
-import TabProductItem from '../../views/prodcut/TabProductItem'
+import TabProduct from '../../views/product/TabProduct'
+import TabProductItem from '../../views/product/TabProductItem'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'

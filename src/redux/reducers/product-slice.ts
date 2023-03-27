@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
+import { IPagePagination } from '../../types/api/order-api'
 import { deleteProduct, getProducts, updateProdItem, updateProduct } from '../actions/product-action'
 
 export interface ProductState {
   products: IProductTable[]
+  total: number
 }
 
 const initialState: ProductState = {
-  products: []
+  products: [],
+  total: 0
 }
 
 export const productsSlice = createSlice({
@@ -37,8 +40,9 @@ export const productsSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(getProducts.fulfilled, (state, action: PayloadAction<IProductTable[]>) => {
-        state.products = action.payload
+      .addCase(getProducts.fulfilled, (state, action: PayloadAction<IPagePagination<IProductTable[]>>) => {
+        state.products = [...state.products, ...action.payload.data]
+        state.total = action.payload.total
       })
       .addCase(deleteProduct.fulfilled, (state, action: PayloadAction<string>) => {
         const productId = action.payload

@@ -387,7 +387,7 @@ const TabProductItem = () => {
                 name={'product'}
                 rules={{ required: { value: true, message: 'Product is required' } }}
                 control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                   <Autocomplete
                     disablePortal
                     id='product'
@@ -412,7 +412,7 @@ const TabProductItem = () => {
                 name={'tags'}
                 rules={{ required: { value: true, message: `Tags is required` } }}
                 control={control}
-                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                   <Autocomplete
                     disablePortal
                     multiple
@@ -439,7 +439,7 @@ const TabProductItem = () => {
                   name={item.variationName}
                   rules={{ required: { value: true, message: `${item.variationName} is required` } }}
                   control={control}
-                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                     <Autocomplete
                       disablePortal
                       isOptionEqualToValue={(option, value) => option.value === value.value}
