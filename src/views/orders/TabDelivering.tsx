@@ -130,7 +130,7 @@ export default function TabDelivering({ value }: Props) {
                     >
                       <MenuItem value={OrderStatus.Delivering}>Đang giao</MenuItem>
                       <MenuItem value={OrderStatus.Completed}>Đã giao</MenuItem>
-                      <MenuItem value={OrderStatus.Cancelled}>Đã hủy</MenuItem>
+                      <MenuItem value={OrderStatus.NotAcceptOrder}>Không nhận</MenuItem>
                     </Select>
                   </TableCell>
                 </TableRow>

@@ -40,5 +40,11 @@ export const orderApi = {
     })
 
     return response.data.data
+  },
+
+  refundOrder: async (orderId: string) => {
+    const response = await axiosService.post<IResponseSuccess<string>>(`${URL}/refund/${orderId}`)
+
+    return response.data.data
   }
 }
