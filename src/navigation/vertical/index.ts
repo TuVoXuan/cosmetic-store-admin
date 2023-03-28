@@ -9,9 +9,14 @@ import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
 import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
 import AlertCircleOutline from 'mdi-material-ui/AlertCircleOutline'
 import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
+import GrainOutlinedIcon from '@mui/icons-material/GrainOutlined'
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
 
 const navigation = (): VerticalNavItemsType => {
   return [
@@ -21,83 +26,34 @@ const navigation = (): VerticalNavItemsType => {
       path: '/'
     },
     {
-      title: 'Product',
-      icon: HomeOutline,
+      title: 'Sản phẩm',
+      icon: Inventory2OutlinedIcon,
       path: '/product'
     },
     {
-      title: 'Variation',
-      icon: HomeOutline,
+      title: 'Biến thể',
+      icon: GrainOutlinedIcon,
       path: '/variation'
     },
     {
-      title: 'Brand',
-      icon: HomeOutline,
+      title: 'Thương hiệu',
+      icon: BusinessOutlinedIcon,
       path: '/brand'
     },
     {
-      title: 'Product Tag',
-      icon: HomeOutline,
+      title: 'Thẻ sản phẩm',
+      icon: LocalOfferOutlinedIcon,
       path: '/product-tag'
     },
     {
-      title: 'Orders',
-      icon: HomeOutline,
+      title: 'Đơn hàng',
+      icon: ReceiptLongOutlinedIcon,
       path: '/orders'
     },
     {
-      title: 'Account Settings',
+      title: 'Tài khoản',
       icon: AccountCogOutline,
       path: '/account-settings'
-    },
-    {
-      sectionTitle: 'Pages'
-    },
-    {
-      title: 'Login',
-      icon: Login,
-      path: '/pages/login',
-      openInNewTab: true
-    },
-    {
-      title: 'Register',
-      icon: AccountPlusOutline,
-      path: '/pages/register',
-      openInNewTab: true
-    },
-    {
-      title: 'Error',
-      icon: AlertCircleOutline,
-      path: '/pages/error',
-      openInNewTab: true
-    },
-    {
-      sectionTitle: 'User Interface'
-    },
-    {
-      title: 'Typography',
-      icon: FormatLetterCase,
-      path: '/typography'
-    },
-    {
-      title: 'Icons',
-      path: '/icons',
-      icon: GoogleCirclesExtended
-    },
-    {
-      title: 'Cards',
-      icon: CreditCardOutline,
-      path: '/cards'
-    },
-    {
-      title: 'Tables',
-      icon: Table,
-      path: '/tables'
-    },
-    {
-      icon: CubeOutline,
-      title: 'Form Layouts',
-      path: '/form-layouts'
     }
   ]
 }

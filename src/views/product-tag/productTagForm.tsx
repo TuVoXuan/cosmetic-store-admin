@@ -22,8 +22,8 @@ interface FormValue {
 }
 
 const importances: IOption[] = [
-  { label: 'Normal', value: '1' },
-  { label: 'Importance', value: '3' }
+  { label: 'Bình thường', value: '1' },
+  { label: 'Quan trọng', value: '3' }
 ]
 
 export default function ProductTagForm() {
@@ -48,15 +48,15 @@ export default function ProductTagForm() {
           })
         ).unwrap()
 
-        toast.success('Update product tag success')
+        toast.success('Cập nhập thẻ sản phẩm thành công')
       } else {
         await dispatch(createTag({ name: value.name, weight: parseInt(value.weight.value) })).unwrap()
-        toast.success('Create product tag success.')
+        toast.success('Tạo thẻ sản phẩm thành công')
       }
       reset()
     } catch (error) {
       console.log('error: ', error)
-      toast.error('Have some errors')
+      toast.error('Đã xảy ra lỗi')
     }
   }
 
@@ -71,7 +71,7 @@ export default function ProductTagForm() {
 
   return (
     <Card>
-      <CardHeader title={selectedTag ? 'Update Tag' : 'Create Tag'} titleTypographyProps={{ variant: 'h6' }} />
+      <CardHeader title={selectedTag ? 'Cập nhập thẻ' : 'Tạo thẻ'} titleTypographyProps={{ variant: 'h6' }} />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
@@ -79,7 +79,7 @@ export default function ProductTagForm() {
               <Controller
                 control={control}
                 name={'name'}
-                rules={{ required: { value: true, message: 'Name is required' } }}
+                rules={{ required: { value: true, message: 'Yêu cầu nhập tên thẻ' } }}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <TextField
                     value={value}
@@ -87,8 +87,8 @@ export default function ProductTagForm() {
                     error={invalid}
                     helperText={error?.message}
                     fullWidth
-                    label='Name'
-                    placeholder='Leonard Carter'
+                    label='Tên thẻ'
+                    placeholder='Kem chống nắng'
                   />
                 )}
               />
@@ -96,7 +96,7 @@ export default function ProductTagForm() {
             <Grid item xs={12} lg={5}>
               <Controller
                 name={'weight'}
-                rules={{ required: { value: true, message: `Weight is required` } }}
+                rules={{ required: { value: true, message: `Yêu cầu chọn trọng số` } }}
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <Autocomplete
@@ -108,7 +108,7 @@ export default function ProductTagForm() {
                     options={importances}
                     sx={{ width: '100%' }}
                     renderInput={params => (
-                      <TextField {...params} error={invalid} helperText={error?.message} label='Importance' />
+                      <TextField {...params} error={invalid} helperText={error?.message} label='Trọng số' />
                     )}
                     onChange={(e, value) => {
                       onChange(value)
@@ -121,7 +121,7 @@ export default function ProductTagForm() {
             </Grid>
             <Grid item xs={12}>
               <Button type='submit' variant='contained' size='large'>
-                Submit
+                Lưu
               </Button>
             </Grid>
           </Grid>

@@ -28,7 +28,7 @@ export default function ProductTagTable() {
   const handleDelete = async (id: string) => {
     try {
       await dispatch(deleteTag(id)).unwrap()
-      toast.success('Delete product tag success')
+      toast.success('Xóa thẻ sản phẩm thành công')
     } catch (error) {
       console.log('error: ', error)
       toast.error((error as IResponseError).error)
@@ -40,11 +40,11 @@ export default function ProductTagTable() {
       t => (
         <Box>
           <p>
-            Do want to delete <span style={{ fontWeight: 700 }}>{tag.name}</span>?
+            Bạn có muốn xóa <span style={{ fontWeight: 700 }}>{tag.name}</span>?
           </p>
           <Box sx={{ display: 'flex', justifyContent: 'end', columnGap: '12px' }}>
             <Button onClick={() => toast.dismiss(t.id)} type='button' color='error' variant='text'>
-              no
+              Không
             </Button>
             <Button
               onClick={() => {
@@ -55,7 +55,7 @@ export default function ProductTagTable() {
               color='error'
               variant='contained'
             >
-              Yes
+              Có
             </Button>
           </Box>
         </Box>
@@ -83,7 +83,7 @@ export default function ProductTagTable() {
   return (
     <Card>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <CardHeader title='Product Tags' titleTypographyProps={{ variant: 'h6' }} />
+        <CardHeader title='Thẻ sản phẩm' titleTypographyProps={{ variant: 'h6' }} />
         <Button
           onClick={() => setSelectedTag(undefined)}
           size='medium'
@@ -91,7 +91,7 @@ export default function ProductTagTable() {
           type='submit'
           sx={{ mr: 5 }}
         >
-          Create Tag
+          Tạo thẻ
         </Button>
       </Box>
       <TableContainer component={Paper}>

@@ -53,7 +53,7 @@ export default function CreateAndBrandForm() {
     }
   })
 
-  const [logo, setLogo] = useState<string>('/images/avatars/1.png')
+  const [logo, setLogo] = useState<string>('/images/cards/default-img.png')
   const [logoFile, setLogoFile] = useState<File>()
   const dispatch = useAppDispatch()
 
@@ -82,8 +82,8 @@ export default function CreateAndBrandForm() {
 
     if (result) {
       toast.promise(result, {
-        loading: selectedBrand ? 'Updating brand ...' : 'Creating new brand ...',
-        success: selectedBrand ? 'Update brand success' : 'Create product item success',
+        loading: selectedBrand ? 'Đang cập nhập thương hiệu ...' : 'Đang tạo thương hiệu mới ...',
+        success: selectedBrand ? 'Cập nhập thương hiệu thành công' : 'Tạo thương hiệu thành công',
         error: err => (err as IResponseError).error
       })
     }
@@ -102,14 +102,17 @@ export default function CreateAndBrandForm() {
       setLogo(selectedBrand.logo)
       setValue('name', selectedBrand.name)
     } else {
-      setLogo('/images/avatars/1.png')
+      setLogo('/images/cards/default-img.png')
       setValue('name', '')
     }
   }, [selectedBrand])
 
   return (
     <Card>
-      <CardHeader title={selectedBrand ? 'Update Brand' : 'Add Brand'} titleTypographyProps={{ variant: 'h5' }} />
+      <CardHeader
+        title={selectedBrand ? 'Cập nhập thương hiệu' : 'Thêm thương hiệu'}
+        titleTypographyProps={{ variant: 'h5' }}
+      />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={7}>
@@ -121,10 +124,10 @@ export default function CreateAndBrandForm() {
                 <ImgStyled src={logo} alt='logo' />
                 <Box>
                   <ButtonStyled component='label' variant='contained' htmlFor='logo-input'>
-                    Upload logo
+                    Tải hình ảnh
                     <input
                       {...register('logo', {
-                        required: { value: selectedBrand ? false : true, message: 'Logo is required' }
+                        required: { value: selectedBrand ? false : true, message: 'Yêu cầu hình ảnh thương hiệu' }
                       })}
                       hidden
                       type='file'
@@ -140,14 +143,11 @@ export default function CreateAndBrandForm() {
                     variant='outlined'
                     onClick={() => {
                       setValue('logo', undefined)
-                      setLogo('/images/avatars/1.png')
+                      setLogo('/images/cards/default-img.png')
                     }}
                   >
                     Reset
                   </ResetButtonStyled>
-                  <Typography variant='body2' sx={{ marginTop: 5 }}>
-                    Allowed PNG or JPEG. Max size of 800K.
-                  </Typography>
                 </Box>
               </Box>
             </Grid>
@@ -155,15 +155,15 @@ export default function CreateAndBrandForm() {
               <Controller
                 name={'name'}
                 defaultValue={''}
-                rules={{ required: { value: true, message: 'Brand is required' } }}
+                rules={{ required: { value: true, message: 'Yêu cầu tên thương hiệu' } }}
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <TextField
                     error={invalid}
                     helperText={error?.message}
                     fullWidth
-                    label='Name'
-                    placeholder='aA'
+                    label='Tên thương hiệu'
+                    placeholder='Tên thương hiệu'
                     onChange={onChange}
                     value={value}
                   />
@@ -172,7 +172,7 @@ export default function CreateAndBrandForm() {
             </Grid>
             <Grid item xs={12} sm={12}>
               <Button color='primary' variant='contained' type='submit'>
-                Submit
+                Lưu
               </Button>
             </Grid>
           </Grid>
