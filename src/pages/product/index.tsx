@@ -10,6 +10,8 @@ import { useRouter } from 'next/router'
 import ProtectRoute from '../../layouts/components/ProtectRoute'
 import { getCookie } from 'cookies-next'
 import TableProduct from '../../views/product/TableProduct'
+import FilterProduct from '../../views/product/FilterProduct'
+import { FilterProductProvider } from '../../context/product'
 
 interface Props {
   auth: string
@@ -20,26 +22,30 @@ const Product = ({ auth }: Props) => {
 
   return (
     <ProtectRoute auth={auth}>
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <Card>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <CardHeader title='Products' titleTypographyProps={{ variant: 'h6' }} />
-              <Button
-                onClick={() => router.push('/product/create')}
-                size='medium'
-                variant='contained'
-                type='submit'
-                sx={{ mr: 5 }}
-              >
-                Create
-              </Button>
-            </Box>
-            <TableProduct />
-          </Card>
+      <FilterProductProvider>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <FilterProduct />
+          </Grid>
+          <Grid item xs={12}>
+            <Card>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <CardHeader title='Sản phẩm' titleTypographyProps={{ variant: 'h6' }} />
+                <Button
+                  onClick={() => router.push('/product/create')}
+                  size='medium'
+                  variant='contained'
+                  type='submit'
+                  sx={{ mr: 5 }}
+                >
+                  Thêm mới
+                </Button>
+              </Box>
+              <TableProduct />
+            </Card>
+          </Grid>
         </Grid>
-        {/* <AlertDialogModal open={openDeleteModel} onClose={handleCloseModal} /> */}
-      </Grid>
+      </FilterProductProvider>
     </ProtectRoute>
   )
 }

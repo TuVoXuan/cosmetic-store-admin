@@ -8,7 +8,7 @@ const initialState: IUser = {
   birthday: '',
   name: '',
   email: '',
-  gender: Gender.Male,
+  gender: Gender.Female,
   role: AdminRole.Main
 }
 

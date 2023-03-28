@@ -1,4 +1,3 @@
-import { IGetOrdersParam, IOrderDetail, IOrderTable, IPagePagination, IUpdateOrderStatus } from '../types/api/order-api'
 import axiosService from './axios-service'
 
 const API = process.env.API_URL

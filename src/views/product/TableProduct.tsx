@@ -22,10 +22,12 @@ import ChevronDown from 'mdi-material-ui/ChevronDown'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded'
-import { removeProductItem, selectProducts } from '../../redux/reducers/product-slice'
+import { removeProductItem, resetProducts, selectProducts } from '../../redux/reducers/product-slice'
 import { deleteProduct, getProducts } from '../../redux/actions/product-action'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 import { useRouter } from 'next/router'
+import { IFilterProduct, IProductTable } from '../../types/api/product-api'
+import { IFilterProductForm, useFilterProduct } from '../../context/product'
 
 const Row = (props: { row: IProductTable }) => {
   // ** Props
@@ -140,6 +142,7 @@ const Row = (props: { row: IProductTable }) => {
             {open ? <ChevronUp /> : <ChevronDown />}
           </IconButton>
         </TableCell>
+        <TableCell>{row.productId}</TableCell>
         <TableCell component='th' scope='row'>
           {row.name}
         </TableCell>
@@ -232,41 +235,43 @@ const Row = (props: { row: IProductTable }) => {
 }
 
 const TableProduct = () => {
-  //   const [products, setProducts] = useState<IProductTable[]>()
   const dispatch = useAppDispatch()
+  const { filter, loading, setLoading } = useFilterProduct()
   const { products, total } = useAppSelector(selectProducts)
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [loading, setLoading] = useState(false)
 
-  const handleGetProduct = async () => {
-    if (products.length === 0) {
-      setLoading(true)
+  const handleGetProduct = async (page: number, rowsPerPage: number, filter: IFilterProductForm) => {
+    setLoading(true)
 
-      await dispatch(
-        getProducts({
-          page: page,
-          limit: rowsPerPage
-        })
-      ).unwrap()
-
-      setLoading(false)
+    const data: IFilterProduct = {
+      page: page,
+      limit: rowsPerPage
     }
+
+    if (filter.search && filter.type) {
+      data.search = filter.search
+      data.type = filter.type
+    }
+
+    if (filter.brands.length > 0) {
+      data.brands = filter.brands.map(item => item.value).join(',')
+    }
+
+    if (filter.categories.length > 0) {
+      data.category = filter.categories.map(item => item.value).join(',')
+    }
+
+    await dispatch(getProducts(data)).unwrap()
+
+    setLoading(false)
   }
 
   const handleChangePage = async (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     try {
       if (newPage * rowsPerPage >= products.length) {
-        setLoading(true)
-        await dispatch(
-          getProducts({
-            page: newPage,
-            limit: rowsPerPage
-          })
-        ).unwrap()
-
-        setLoading(false)
+        handleGetProduct(newPage, rowsPerPage, filter)
       }
       setPage(newPage)
     } catch (error) {
@@ -280,31 +285,41 @@ const TableProduct = () => {
   }
 
   useEffect(() => {
-    handleGetProduct()
+    if (products.length === 0) {
+      handleGetProduct(page, rowsPerPage, filter)
+    }
   }, [])
+
+  useEffect(() => {
+    dispatch(resetProducts())
+    setPage(0)
+    handleGetProduct(0, rowsPerPage, filter)
+  }, [filter])
 
   return (
     <>
       <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label='Products'>
+        <Table stickyHeader aria-label='Sản phẩm'>
           <colgroup>
             <col width='5%' />
-            <col width='37.5%' />
             <col width='10%' />
-            <col width='37.5%' />
+            <col width='32.5%' />
+            <col width='10%' />
+            <col width='32.5%' />
             <col width='10%' />
           </colgroup>
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell align='left'>Name</TableCell>
-              <TableCell>Brand</TableCell>
-              <TableCell align='center'>Category</TableCell>
-              <TableCell align='center'>Actions</TableCell>
+              <TableCell align='left'>Mã</TableCell>
+              <TableCell align='left'>Tên</TableCell>
+              <TableCell>Thương hiệu</TableCell>
+              <TableCell align='center'>Phân loại</TableCell>
+              <TableCell align='center'>hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products &&
+            {products.length > 0 &&
               !loading &&
               products
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -313,7 +328,7 @@ const TableProduct = () => {
         </Table>
         {products.length === 0 && !loading && (
           <Typography color='text.secondary' sx={{ textAlign: 'center', mt: 4 }}>
-            Không có đơn hàng
+            Không sản phẩm
           </Typography>
         )}
         {loading && (

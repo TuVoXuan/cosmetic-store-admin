@@ -58,15 +58,15 @@ export default function AddOptionsForm() {
   }
 
   return (
-    <Card>
-      <CardHeader title={'Add options'} titleTypographyProps={{ variant: 'h5' }} />
+    <Card id='tab-variation'>
+      <CardHeader title={'Thêm giá trị'} titleTypographyProps={{ variant: 'h5' }} />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={7}>
             <Grid item xs={12} sm={5}>
               <TextField
                 fullWidth
-                label='Variation (vi)'
+                label='Biến thể tiếng Việt'
                 placeholder='Công dụng'
                 value={selectedVariation.name.filter(item => item.language === 'vi')[0].value}
                 disabled
@@ -75,8 +75,8 @@ export default function AddOptionsForm() {
             <Grid item xs={12} sm={5}>
               <TextField
                 fullWidth
-                label='Variation (en)'
-                placeholder='Công dụng'
+                label='Biến thể tiếng anh'
+                placeholder='Use'
                 value={selectedVariation.name.filter(item => item.language === 'en')[0].value}
                 disabled
               />
@@ -88,14 +88,14 @@ export default function AddOptionsForm() {
                     <Controller
                       name={option + 'vi'}
                       defaultValue={''}
-                      rules={{ required: { value: true, message: 'Option is required' } }}
+                      rules={{ required: { value: true, message: 'Nhập giá trị' } }}
                       control={control}
                       render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                         <TextField
                           error={invalid}
                           helperText={error?.message}
                           fullWidth
-                          label='Option (vi)'
+                          label='Giá trị tiếng Việt'
                           placeholder='Công dụng'
                           onChange={onChange}
                           value={value}
@@ -107,14 +107,14 @@ export default function AddOptionsForm() {
                     <Controller
                       name={option + 'en'}
                       defaultValue={''}
-                      rules={{ required: { value: true, message: 'Option is required' } }}
+                      rules={{ required: { value: true, message: 'Nhập giá trị' } }}
                       control={control}
                       render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                         <TextField
                           error={invalid}
                           helperText={error?.message}
                           fullWidth
-                          label='Option (en)'
+                          label='Giá trị tiếng anh'
                           placeholder='Công dụng'
                           onChange={onChange}
                           value={value}
@@ -131,12 +131,12 @@ export default function AddOptionsForm() {
               ))}
             <Grid item xs={12} sm={7}>
               <Button color='primary' variant='outlined' onClick={add}>
-                Add Option
+                Thêm giá trị
               </Button>
             </Grid>
             <Grid item xs={12} sm={7}>
               <Button color='primary' variant='contained' type='submit'>
-                Submit
+                Xong
               </Button>
             </Grid>
           </Grid>

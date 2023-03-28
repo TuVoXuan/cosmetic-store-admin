@@ -13,7 +13,6 @@ import Button from '@mui/material/Button'
 
 // ** Icons Imports
 import { Controller, useForm } from 'react-hook-form'
-import { Gender } from '../../types/enum'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 import { selectUser } from '../../redux/reducers/user-slice'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -21,6 +20,7 @@ import DatePickerWrapper from '../../@core/styles/libs/react-datepicker'
 import DatePicker from 'react-datepicker'
 import { toast } from 'react-hot-toast'
 import { updateInfo } from '../../redux/actions/user-action'
+import { Gender } from '../../types/enum'
 
 const CustomInput = forwardRef((props, ref) => {
   return <TextField inputRef={ref} label='Ngày sinh' fullWidth {...props} />

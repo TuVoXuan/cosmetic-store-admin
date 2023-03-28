@@ -22,6 +22,7 @@ import productApi from '../../api/product-api'
 import { toast } from 'react-hot-toast'
 import { useAppDispatch } from '../../store/configureStore'
 import { addProduct } from '../../redux/reducers/product-slice'
+import { ICreateProduct } from '../../types/api/product-api'
 
 interface FormValue {
   nameVi: string
@@ -62,8 +63,8 @@ const TabProduct = () => {
     }
   })
 
-  register('desEn', { required: { value: true, message: 'Description (En) is required' } })
-  register('desVi', { required: { value: true, message: 'Description (Vi) is required' } })
+  register('desEn', { required: { value: true, message: 'Nhập mô tả tiếng Việt' } })
+  register('desVi', { required: { value: true, message: 'Nhập mô tả tiếng Anh' } })
 
   //* text editor
   const modules = {
@@ -203,7 +204,7 @@ const TabProduct = () => {
 
   return (
     <Fragment>
-      <CardHeader title='Create Product' titleTypographyProps={{ variant: 'h6' }} />
+      <CardHeader title='Tạo sản phẩm' titleTypographyProps={{ variant: 'h6' }} />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={7}>
@@ -211,14 +212,14 @@ const TabProduct = () => {
               <Controller
                 name={'nameVi'}
                 defaultValue={''}
-                rules={{ required: { value: true, message: 'Name (vi) is required' } }}
+                rules={{ required: { value: true, message: 'Nhập tên tiếng Việt' } }}
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <TextField
                     error={invalid}
                     helperText={error?.message}
                     fullWidth
-                    label='Name (vi)'
+                    label='Tên tiếng Việt'
                     placeholder='Kem chống nắng'
                     onChange={onChange}
                     value={value}
@@ -231,14 +232,14 @@ const TabProduct = () => {
               <Controller
                 name={'nameEn'}
                 defaultValue={''}
-                rules={{ required: { value: true, message: 'Name (en) is required' } }}
+                rules={{ required: { value: true, message: 'Nhập tên tiếng anh' } }}
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <TextField
                     error={invalid}
                     helperText={error?.message}
                     fullWidth
-                    label='Name (en)'
+                    label='Tên tiếng anh'
                     placeholder='Sun care'
                     onChange={onChange}
                     value={value}
@@ -249,7 +250,7 @@ const TabProduct = () => {
 
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth color='error'>
-                <FormLabel error={errors.desVi?.message ? true : false}>Description (vi)</FormLabel>
+                <FormLabel error={errors.desVi?.message ? true : false}>Mô tả tiếng Việt</FormLabel>
                 <QuillNoSSRWrapper
                   onChange={value => {
                     setValue('desVi', value)
@@ -264,7 +265,7 @@ const TabProduct = () => {
 
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <FormLabel error={errors.desEn?.message ? true : false}>Description (en)</FormLabel>
+                <FormLabel error={errors.desEn?.message ? true : false}>Mô tả tiếng Anh</FormLabel>
                 <QuillNoSSRWrapper
                   onChange={value => {
                     setValue('desEn', value)
@@ -281,16 +282,16 @@ const TabProduct = () => {
               <FormControl fullWidth>
                 <Controller
                   name={'brand'}
-                  rules={{ required: { value: true, message: 'Brand is required' } }}
+                  rules={{ required: { value: true, message: 'Nhập thương hiệu' } }}
                   control={control}
-                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                     <Autocomplete
                       disablePortal
                       id='brand'
                       options={brands}
                       sx={{ width: '100%' }}
                       renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Brand' />
+                        <TextField {...params} error={invalid} helperText={error?.message} label='Thương hiệu' />
                       )}
                       onChange={(e, value) => {
                         onChange(value)
@@ -307,9 +308,9 @@ const TabProduct = () => {
               <FormControl fullWidth>
                 <Controller
                   name={'category'}
-                  rules={{ required: { value: true, message: 'Category is required' } }}
+                  rules={{ required: { value: true, message: 'Nhập danh muc' } }}
                   control={control}
-                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                     <Autocomplete
                       disablePortal
                       id='category'
@@ -317,7 +318,7 @@ const TabProduct = () => {
                       options={categories}
                       sx={{ width: '100%' }}
                       renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Category' />
+                        <TextField {...params} error={invalid} helperText={error?.message} label='Danh mục' />
                       )}
                       onChange={(e, value) => {
                         onChange(value)
@@ -335,7 +336,7 @@ const TabProduct = () => {
                 <Controller
                   name={'variation'}
                   control={control}
-                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                     <Autocomplete
                       disablePortal
                       id='variantion'
@@ -343,7 +344,7 @@ const TabProduct = () => {
                       options={variations}
                       sx={{ width: '100%' }}
                       renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Variation' />
+                        <TextField {...params} error={invalid} helperText={error?.message} label='Biến thể' />
                       )}
                       onChange={(e, value) => {
                         onChange(value)
@@ -358,7 +359,7 @@ const TabProduct = () => {
 
             <Grid item xs={12}>
               <Button variant='contained' type='submit'>
-                submit
+                Xong
               </Button>
             </Grid>
           </Grid>
