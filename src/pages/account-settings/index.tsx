@@ -69,7 +69,7 @@ const AccountSettings = ({ auth }: Props) => {
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <AccountOutline />
-                  <TabName>Account</TabName>
+                  <TabName>Tài khoản</TabName>
                 </Box>
               }
             />
@@ -78,16 +78,7 @@ const AccountSettings = ({ auth }: Props) => {
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <LockOpenOutline />
-                  <TabName>Security</TabName>
-                </Box>
-              }
-            />
-            <Tab
-              value='info'
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <InformationOutline />
-                  <TabName>Info</TabName>
+                  <TabName>Bảo mật</TabName>
                 </Box>
               }
             />
@@ -98,9 +89,6 @@ const AccountSettings = ({ auth }: Props) => {
           </TabPanel>
           <TabPanel sx={{ p: 0 }} value='security'>
             <TabSecurity />
-          </TabPanel>
-          <TabPanel sx={{ p: 0 }} value='info'>
-            <TabInfo />
           </TabPanel>
         </TabContext>
       </Card>
