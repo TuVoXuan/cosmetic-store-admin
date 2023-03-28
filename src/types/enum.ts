@@ -21,3 +21,8 @@ export enum AdminRole {
   Main = 'main',
   Secondary = 'secondary'
 }
+
+export enum Search {
+  Id = 'id',
+  Name = 'name'
+}

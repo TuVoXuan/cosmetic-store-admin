@@ -6,7 +6,6 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Button, { ButtonProps } from '@mui/material/Button'
 
@@ -21,6 +20,7 @@ import { updateProdItem } from '../../../../redux/actions/product-action'
 import { tagApi } from '../../../../api/product-tag-api'
 import ProtectRoute from '../../../../layouts/components/ProtectRoute'
 import { getCookie } from 'cookies-next'
+import { IProdtem } from '../../../../types/api/product-api'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -213,19 +213,19 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
   return (
     <ProtectRoute auth={auth}>
       <Card>
-        <CardHeader title='Update Product Item' titleTypographyProps={{ variant: 'h6' }} />
+        <CardHeader title='Cập nhập sản phẩm con' titleTypographyProps={{ variant: 'h6' }} />
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={7}>
               <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
                 <FormLabel style={{ fontWeight: 500 }} error={errors.thumbnail?.message ? true : false}>
-                  Product thumbnail
+                  Ảnh đại diện
                 </FormLabel>
                 <Box sx={{ display: 'flex', alignItems: 'center', mt: 4 }}>
                   <ImgStyled src={thumbnail} alt='Profile Pic' />
                   <Box>
                     <ButtonStyled component='label' variant='contained' htmlFor='thumbnail-upload-image'>
-                      Upload Thumbnail
+                      Tải lên
                       <input
                         {...register('thumbnail')}
                         hidden
@@ -247,16 +247,13 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                     >
                       Reset
                     </ResetButtonStyled>
-                    <Typography variant='body2' sx={{ marginTop: 5 }}>
-                      Allowed PNG or JPEG. Max size of 800K.
-                    </Typography>
                   </Box>
                 </Box>
               </Grid>
 
               <Grid item xs={12}>
                 <FormLabel style={{ fontWeight: 500 }} error={errors.images?.message ? true : false}>
-                  Product images
+                  Ảnh khác
                 </FormLabel>
                 <Box sx={{ marginTop: 4 }}>
                   {imgSrc.map((img, index) => (
@@ -264,7 +261,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                   ))}
                   <Box sx={{ mt: 4 }}>
                     <ButtonStyled component='label' variant='contained' htmlFor='products-upload-image'>
-                      Upload product images
+                      Tải lên
                       <input
                         hidden
                         {...register('images')}
@@ -287,9 +284,6 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                     >
                       Reset
                     </ResetButtonStyled>
-                    <Typography variant='body2' sx={{ marginTop: 5 }}>
-                      Allowed PNG or JPEG. Max size of 800K.
-                    </Typography>
                   </Box>
                 </Box>
               </Grid>
@@ -299,8 +293,8 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                   name={'price'}
                   defaultValue={0}
                   rules={{
-                    required: { value: true, message: 'Price is required' },
-                    min: { value: 1000, message: 'Price must be greate than 1000' }
+                    required: { value: true, message: 'Nhập giá tiền' },
+                    min: { value: 1000, message: 'Giá tiền phải lớn hơn hoặc bằng 1000 đ' }
                   }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
@@ -308,7 +302,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                       fullWidth
                       error={invalid}
                       helperText={error?.message}
-                      label='Price'
+                      label='Giá tiền'
                       InputProps={{
                         startAdornment: <InputAdornment position='start'>VND</InputAdornment>
                       }}
@@ -324,8 +318,8 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                   name={'quantity'}
                   defaultValue={0}
                   rules={{
-                    required: { value: true, message: 'Quantity is required' },
-                    min: { value: 1, message: 'Price must be greate than 1' }
+                    required: { value: true, message: 'Nhập số lượng' },
+                    min: { value: 1, message: 'Số lượng phải lớn hơn hoặc bằng 1' }
                   }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
@@ -333,7 +327,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                       fullWidth
                       error={invalid}
                       helperText={error?.message}
-                      label='Quantity'
+                      label='Số lượng'
                       value={value}
                       onChange={onChange}
                     />
@@ -344,7 +338,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
               <Grid item xs={12} sm={6}>
                 <Controller
                   name={'tags'}
-                  rules={{ required: { value: true, message: `Tags is required` } }}
+                  rules={{ required: { value: true, message: `Chọn thẻ` } }}
                   control={control}
                   render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                     <Autocomplete
@@ -356,7 +350,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                       options={tags}
                       sx={{ width: '100%' }}
                       renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label={'Tags'} />
+                        <TextField {...params} error={invalid} helperText={error?.message} label={'Thẻ'} />
                       )}
                       onChange={(e, value) => {
                         onChange(value)
@@ -372,7 +366,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                 <Grid item xs={12} sm={6} key={item.variationName}>
                   <Controller
                     name={item.variationName}
-                    rules={{ required: { value: true, message: `${item.variationName} is required` } }}
+                    rules={{ required: { value: true, message: `${item.variationName} bắt buộc` } }}
                     control={control}
                     render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                       <Autocomplete
@@ -405,7 +399,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
 
               <Grid item xs={12}>
                 <Button variant='contained' type='submit' sx={{ marginRight: 3.5 }}>
-                  Save
+                  Lưu
                 </Button>
               </Grid>
             </Grid>

@@ -1,6 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
 import { IPagePagination } from '../../types/api/order-api'
+import {
+  IProductTable,
+  ICreateProductItemRes,
+  IDeleteProductItemRes,
+  ICreateProductRes,
+  IProductUpdatedRes,
+  IUpdateProdItemRes
+} from '../../types/api/product-api'
 import { deleteProduct, getProducts, updateProdItem, updateProduct } from '../actions/product-action'
 
 export interface ProductState {
@@ -36,6 +44,10 @@ export const productsSlice = createSlice({
     addProduct: (state, action: PayloadAction<ICreateProductRes>) => {
       const newProduct = action.payload
       state.products.push({ ...newProduct, productItems: [] })
+    },
+
+    resetProducts: state => {
+      ;(state.products = []), (state.total = 0)
     }
   },
   extraReducers(builder) {
@@ -73,7 +85,7 @@ export const productsSlice = createSlice({
   }
 })
 
-export const { removeProductItem, addProductItem, addProduct } = productsSlice.actions
+export const { removeProductItem, addProductItem, addProduct, resetProducts } = productsSlice.actions
 
 export const selectProducts = (state: RootState) => state.products
 

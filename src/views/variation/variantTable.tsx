@@ -98,7 +98,7 @@ export default function VariantTable() {
   return (
     <Card>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <CardHeader title={'Variations'} titleTypographyProps={{ variant: 'h5' }} />
+        <CardHeader title={'Biến thể'} titleTypographyProps={{ variant: 'h5' }} />
         <Button
           onClick={() => {
             setTab('create')
@@ -106,21 +106,16 @@ export default function VariantTable() {
           sx={{ mr: 5 }}
           variant='contained'
         >
-          Add Variation
+          Thêm biến thể
         </Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table aria-label='simple table'>
-          <colgroup>
-            <col width='20%' />
-            <col width='60%' />
-            <col width='20%' />
-          </colgroup>
+      <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell>Variation</TableCell>
-              <TableCell align='center'>Options</TableCell>
-              <TableCell align='right'>Action</TableCell>
+              <TableCell>Biến thể</TableCell>
+              <TableCell align='center'>Giá trị</TableCell>
+              <TableCell align='right'>Hành động</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

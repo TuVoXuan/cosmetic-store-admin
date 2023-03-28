@@ -67,7 +67,7 @@ const CreateProduct = ({ auth }: Props) => {
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Inventory2OutlinedIcon />
-                  <TabName>Product</TabName>
+                  <TabName>Sản phẩm</TabName>
                 </Box>
               }
             />
@@ -76,7 +76,7 @@ const CreateProduct = ({ auth }: Props) => {
               label={
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <WidgetsOutlinedIcon />
-                  <TabName>Product Item</TabName>
+                  <TabName>Sản phẩm con</TabName>
                 </Box>
               }
             />

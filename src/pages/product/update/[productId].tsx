@@ -21,6 +21,7 @@ import { useRouter } from 'next/router'
 import { updateProduct } from '../../../redux/actions/product-action'
 import ProtectRoute from '../../../layouts/components/ProtectRoute'
 import { getCookie } from 'cookies-next'
+import { IProductSimPle } from '../../../types/api/product-api'
 
 interface FormValue {
   nameVi: string
@@ -106,8 +107,8 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
     }
   })
 
-  register('desEn', { required: { value: true, message: 'Description (En) is required' } })
-  register('desVi', { required: { value: true, message: 'Description (Vi) is required' } })
+  register('desEn', { required: { value: true, message: 'Nhập mô tả tiếng Anh' } })
+  register('desVi', { required: { value: true, message: 'Nhập mô tả tiếng Việt' } })
 
   //* text editor
   const modules = {
@@ -190,7 +191,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
   return (
     <ProtectRoute auth={auth}>
       <Card>
-        <CardHeader title='Update Product' titleTypographyProps={{ variant: 'h6' }} />
+        <CardHeader title='Cập nhập sản phẩm' titleTypographyProps={{ variant: 'h6' }} />
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={7}>
@@ -198,14 +199,14 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
                 <Controller
                   name={'nameVi'}
                   defaultValue={''}
-                  rules={{ required: { value: true, message: 'Name (vi) is required' } }}
+                  rules={{ required: { value: true, message: 'Nhập tên sản phẩm' } }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                     <TextField
                       error={invalid}
                       helperText={error?.message}
                       fullWidth
-                      label='Name (vi)'
+                      label='Tên tiếng Việt'
                       placeholder='Kem chống nắng'
                       onChange={onChange}
                       value={value}
@@ -218,14 +219,14 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
                 <Controller
                   name={'nameEn'}
                   defaultValue={''}
-                  rules={{ required: { value: true, message: 'Name (en) is required' } }}
+                  rules={{ required: { value: true, message: 'Nhập tên sản phẩmphẩm' } }}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                     <TextField
                       error={invalid}
                       helperText={error?.message}
                       fullWidth
-                      label='Name (en)'
+                      label='Tên tiếng anh'
                       placeholder='Sun care'
                       onChange={onChange}
                       value={value}
@@ -236,7 +237,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
 
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth color='error'>
-                  <FormLabel error={errors.desVi?.message ? true : false}>Description (vi)</FormLabel>
+                  <FormLabel error={errors.desVi?.message ? true : false}>Mô tả tiếng Việt</FormLabel>
                   <QuillNoSSRWrapper
                     onChange={value => {
                       setValue('desVi', value)
@@ -252,7 +253,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
 
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <FormLabel error={errors.desEn?.message ? true : false}>Description (en)</FormLabel>
+                  <FormLabel error={errors.desEn?.message ? true : false}>Mô tả tiếng Anh</FormLabel>
                   <QuillNoSSRWrapper
                     onChange={value => {
                       setValue('desEn', value)
@@ -270,7 +271,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
                 <FormControl fullWidth>
                   <Controller
                     name={'brand'}
-                    rules={{ required: { value: true, message: 'Brand is required' } }}
+                    rules={{ required: { value: true, message: 'Nhập thương hiệu' } }}
                     control={control}
                     render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                       <Autocomplete
@@ -280,7 +281,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
                         options={brands}
                         sx={{ width: '100%' }}
                         renderInput={params => (
-                          <TextField {...params} error={invalid} helperText={error?.message} label='Brand' />
+                          <TextField {...params} error={invalid} helperText={error?.message} label='Thương hiệu' />
                         )}
                         onChange={(e, value) => {
                           onChange(value)
@@ -297,7 +298,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
                 <FormControl fullWidth>
                   <Controller
                     name={'category'}
-                    rules={{ required: { value: true, message: 'Category is required' } }}
+                    rules={{ required: { value: true, message: 'Nhập danh mục' } }}
                     control={control}
                     render={({ field: { onChange }, fieldState: { error, invalid } }) => (
                       <Autocomplete
@@ -310,7 +311,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
                         options={categories}
                         sx={{ width: '100%' }}
                         renderInput={params => (
-                          <TextField {...params} error={invalid} helperText={error?.message} label='Category' />
+                          <TextField {...params} error={invalid} helperText={error?.message} label='Danh mục' />
                         )}
                         onChange={(e, value) => {
                           onChange(value)
@@ -324,7 +325,7 @@ function UpdateProduct({ brands, categories, product, auth }: Props) {
               </Grid>
               <Grid item xs={12}>
                 <Button variant='contained' type='submit'>
-                  submit
+                  Xong
                 </Button>
               </Grid>
             </Grid>

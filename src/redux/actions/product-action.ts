@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import productApi from '../../api/product-api'
-import { IPagePaginationParam } from '../../types/api/order-api'
+import { IFilterProduct, IProductUpdateReq, IUpdateProdItem } from '../../types/api/product-api'
 
-export const getProducts = createAsyncThunk('products', async (param: IPagePaginationParam, thunkAPI) => {
+export const getProducts = createAsyncThunk('products', async (param: IFilterProduct, thunkAPI) => {
   try {
     const response = await productApi.getProductTable(param)
 

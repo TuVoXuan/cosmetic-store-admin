@@ -1,3 +1,5 @@
+import { IPagePaginationParam } from './order-api'
+
 declare interface ICreateProduct {
   name: ITranslate[]
   description: ITranslate[]
@@ -8,6 +10,7 @@ declare interface ICreateProduct {
 
 declare interface ICreateProductRes {
   _id: string
+  productId: string
   name: string
   brand: {
     _id: string
@@ -41,6 +44,7 @@ declare interface IProductItemTable {
 
 declare interface IProductTable {
   _id: string
+  productId: string
   name: string
   productItems: IProductItemTable[]
   brand: {
@@ -114,4 +118,11 @@ declare interface IUpdateProdItem {
 declare interface IUpdateProdItemRes {
   productId: string
   prodItem: IProductItemTable
+}
+
+declare interface IFilterProduct extends IPagePaginationParam {
+  search?: string
+  type?: Search
+  brands?: string
+  category?: string
 }

@@ -71,8 +71,8 @@ export default function CreateVariationForm() {
   }
 
   return (
-    <Card>
-      <CardHeader title={'Add variation'} titleTypographyProps={{ variant: 'h5' }} />
+    <Card id='tab-variation'>
+      <CardHeader title={'Thêm biến thể'} titleTypographyProps={{ variant: 'h5' }} />
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={7}>
@@ -80,14 +80,14 @@ export default function CreateVariationForm() {
               <Controller
                 name={'variationVi'}
                 defaultValue={''}
-                rules={{ required: { value: true, message: 'Variation is required' } }}
+                rules={{ required: { value: true, message: 'Nhập tên biến thể' } }}
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <TextField
                     error={invalid}
                     helperText={error?.message}
                     fullWidth
-                    label='Variation (vi)'
+                    label='Tên biến thể tiếng Việt'
                     placeholder='Công dụng'
                     onChange={onChange}
                     value={value}
@@ -99,14 +99,14 @@ export default function CreateVariationForm() {
               <Controller
                 name={'variationEn'}
                 defaultValue={''}
-                rules={{ required: { value: true, message: 'Variation is required' } }}
+                rules={{ required: { value: true, message: 'Nhập tên biến thể' } }}
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <TextField
                     error={invalid}
                     helperText={error?.message}
                     fullWidth
-                    label='Variation (en)'
+                    label='Tên biến thể tiếng Anh'
                     placeholder='Công dụng'
                     onChange={onChange}
                     value={value}
@@ -121,14 +121,14 @@ export default function CreateVariationForm() {
                     <Controller
                       name={option + 'vi'}
                       defaultValue={''}
-                      rules={{ required: { value: true, message: 'Option is required' } }}
+                      rules={{ required: { value: true, message: 'Nhập giá trị' } }}
                       control={control}
                       render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                         <TextField
                           error={invalid}
                           helperText={error?.message}
                           fullWidth
-                          label='Option (vi)'
+                          label='Giá trị tiếng Việt'
                           placeholder='Công dụng'
                           onChange={onChange}
                           value={value}
@@ -140,15 +140,15 @@ export default function CreateVariationForm() {
                     <Controller
                       name={option + 'en'}
                       defaultValue={''}
-                      rules={{ required: { value: true, message: 'Option is required' } }}
+                      rules={{ required: { value: true, message: 'Nhập giá trị' } }}
                       control={control}
                       render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                         <TextField
                           error={invalid}
                           helperText={error?.message}
                           fullWidth
-                          label='Option (en)'
-                          placeholder='Công dụng'
+                          label='Giá trị tiếng anh'
+                          placeholder='Use'
                           onChange={onChange}
                           value={value}
                         />
@@ -164,12 +164,12 @@ export default function CreateVariationForm() {
               ))}
             <Grid item xs={12} sm={7}>
               <Button color='primary' variant='outlined' onClick={add}>
-                Add Option
+                Thêm giá trị
               </Button>
             </Grid>
             <Grid item xs={12} sm={7}>
               <Button color='primary' variant='contained' type='submit'>
-                Submit
+                Xong
               </Button>
             </Grid>
           </Grid>

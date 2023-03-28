@@ -1,4 +1,19 @@
-import { IPagePagination, IPagePaginationParam } from '../types/api/order-api'
+import { IPagePagination } from '../types/api/order-api'
+import {
+  ICreateProduct,
+  ICreateProductRes,
+  IProductNameRes,
+  IFilterProduct,
+  IProductTable,
+  ICreateProductItemRes,
+  IDeleteProductItemRes,
+  IProductSimPle,
+  IProductUpdateReq,
+  IProductUpdatedRes,
+  IProdItemRes,
+  IUpdateProdItem,
+  IUpdateProdItemRes
+} from '../types/api/product-api'
 import axiosService from './axios-service'
 
 const API = process.env.API_URL
@@ -15,8 +30,20 @@ const productApi = {
     return axiosService.get<IResponseSuccess<IProductNameRes[]>>(`${URL}/list-name`)
   },
 
-  getProductTable: (param: IPagePaginationParam) => {
-    const newURL = `${URL}/dashboard?page=${param.page}&limit=${param.limit}`
+  getProductTable: (param: IFilterProduct) => {
+    let newURL = `${URL}/dashboard?page=${param.page}&limit=${param.limit}`
+
+    if (param.search && param.type) {
+      newURL += `&search=${param.search}&type=${param.type}`
+    }
+
+    if (param.brands) {
+      newURL += `&brands=${param.brands}`
+    }
+
+    if (param.category) {
+      newURL += `&category=${param.category}`
+    }
 
     return axiosService.get<IResponseSuccess<IPagePagination<IProductTable[]>>>(newURL)
   },
