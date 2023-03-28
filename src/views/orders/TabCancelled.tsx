@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { MouseEvent, useEffect, useState } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -13,6 +13,8 @@ import TablePagination from '@mui/material/TablePagination'
 import { useOrders } from '../../context/order'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/router'
+import Button from '@mui/material/Button'
+import { toast } from 'react-hot-toast'
 
 interface Props {
   value: OrderStatus
@@ -64,6 +66,23 @@ export default function TabCancelled({ value }: Props) {
     router.push(`/orders/${orderId}`)
   }
 
+  const handeRefundOrder = async (orderId: string) => {
+    try {
+      toast.loading('Đang hoàn tiền...', { id: 'refundToast' })
+      const res = await orderApi.refundOrder(orderId)
+      const refundOrder = orders.find(order => order._id === res)
+      if (refundOrder) {
+        refundOrder.refund = true
+      }
+      setOrders(orders)
+      toast.dismiss('refundToast')
+      toast.success('Hoàn tiền thành công')
+    } catch (error) {
+      toast.dismiss('refundToast')
+      toast.error((error as IResponseError).error)
+    }
+  }
+
   useEffect(() => {
     setOrders([])
     fetchOrders()
@@ -79,6 +98,7 @@ export default function TabCancelled({ value }: Props) {
               <TableCell align='right'>Ngày tạo</TableCell>
               <TableCell align='right'>Giá trị</TableCell>
               <TableCell align='right'>Phương thức thanh toán</TableCell>
+              <TableCell align='right'>Hoàn tiền</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -102,6 +122,23 @@ export default function TabCancelled({ value }: Props) {
                   </TableCell>
                   <TableCell onClick={handleRowClick(order.orderId)} sx={{ cursor: 'pointer' }} align='center'>
                     {order.paymentMethod}
+                  </TableCell>
+                  <TableCell onClick={handleRowClick(order.orderId)} sx={{ cursor: 'pointer' }} align='center'>
+                    {order.paymentMethod === 'MOMO' ? (
+                      order.refund ? (
+                        'Đã hoàn tiền'
+                      ) : (
+                        <Button
+                          onClick={(event: MouseEvent<HTMLButtonElement>) => {
+                            event.stopPropagation()
+                            handeRefundOrder(order._id)
+                          }}
+                          variant='contained'
+                        >
+                          Hoàn tiền
+                        </Button>
+                      )
+                    ) : null}
                   </TableCell>
                 </TableRow>
               ))}

@@ -6,6 +6,7 @@ declare interface IOrderTable {
   paymentMethod: PaymentMethod
   total: number
   orderId: string
+  refund: boolean
 }
 
 declare interface IPagePaginationParam {
