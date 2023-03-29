@@ -1,13 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
-import { createTag, deleteTag, getTags, updateTag } from '../actions/tag-action'
+import {
+  createTag,
+  createTagGroup,
+  deleteTag,
+  deleteTagGroup,
+  getTags,
+  updateTag,
+  updateTagGroup
+} from '../actions/tag-action'
 
 export interface TagState {
-  tags: ITag[]
+  tagGroups: ITagGroupSlice[]
 }
 
 const initialState: TagState = {
-  tags: []
+  tagGroups: []
 }
 
 export const tagsSlice = createSlice({
@@ -15,23 +23,52 @@ export const tagsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(getTags.fulfilled, (state, action: PayloadAction<ITag[]>) => {
-      state.tags = action.payload
-    })
-    builder.addCase(createTag.fulfilled, (state, action: PayloadAction<ITag>) => {
-      state.tags.push(action.payload)
-    })
-    builder.addCase(updateTag.fulfilled, (state, action: PayloadAction<ITag>) => {
-      const tag = state.tags.find(item => item._id === action.payload._id)
-
-      if (tag) {
-        tag.name = action.payload.name
-        tag.weight = action.payload.weight
-      }
-    })
-    builder.addCase(deleteTag.fulfilled, (state, action: PayloadAction<string>) => {
-      state.tags = state.tags.filter(item => item._id !== action.payload)
-    })
+    builder
+      .addCase(getTags.fulfilled, (state, action: PayloadAction<ITagGroupSlice[]>) => {
+        state.tagGroups = action.payload
+      })
+      .addCase(createTagGroup.fulfilled, (state, action: PayloadAction<ISubTagGroup>) => {
+        state.tagGroups.push({
+          ...action.payload,
+          children: []
+        })
+      })
+      .addCase(createTag.fulfilled, (state, action: PayloadAction<ITag>) => {
+        const { _id, name, parent, weight } = action.payload
+        const tagGroup = state.tagGroups.find(item => item._id === parent)
+        if (tagGroup) {
+          tagGroup.children.push({ _id: _id, name: name, weight: weight })
+        }
+      })
+      .addCase(updateTag.fulfilled, (state, action: PayloadAction<ITag>) => {
+        const { _id, name, parent, weight } = action.payload
+        const tagGroup = state.tagGroups.find(item => item._id === parent)
+        if (tagGroup) {
+          const oldTag = tagGroup.children.find(tag => tag._id === _id)
+          if (oldTag) {
+            oldTag.name = name
+            oldTag.weight = weight
+          }
+        }
+      })
+      .addCase(deleteTag.fulfilled, (state, action: PayloadAction<IDeleteTag>) => {
+        const { _id, parent } = action.payload
+        const tagGroup = state.tagGroups.find(item => item._id === parent)
+        console.log('tagGroup: ', tagGroup)
+        if (tagGroup) {
+          tagGroup.children = tagGroup.children.filter(tag => tag._id !== _id)
+        }
+      })
+      .addCase(updateTagGroup.fulfilled, (state, action: PayloadAction<ISubTagGroup>) => {
+        const { _id, name } = action.payload
+        const tagGroup = state.tagGroups.find(item => item._id === _id)
+        if (tagGroup) {
+          tagGroup.name = name
+        }
+      })
+      .addCase(deleteTagGroup.fulfilled, (state, action: PayloadAction<string>) => {
+        state.tagGroups = state.tagGroups.filter(tagGroup => tagGroup._id !== action.payload)
+      })
   }
 })
 

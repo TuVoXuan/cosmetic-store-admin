@@ -4,6 +4,7 @@ import React from 'react'
 import { TagProvider } from '../context/tag'
 import ProtectRoute from '../layouts/components/ProtectRoute'
 import ProductTagForm from '../views/product-tag/productTagForm'
+import ProductTagGroupForm from '../views/product-tag/productTagGroupForm'
 import ProductTagTable from '../views/product-tag/productTagTable'
 
 interface Props {
@@ -17,6 +18,9 @@ export default function ProductTag({ auth }: Props) {
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <ProductTagTable />
+          </Grid>
+          <Grid item xs={12}>
+            <ProductTagGroupForm />
           </Grid>
           <Grid item xs={12}>
             <ProductTagForm />

@@ -9,4 +9,19 @@ declare interface IUpdateTag extends ICreateTag {
 declare interface ICreateTag {
   name: string
   weight: number
+  parent: string
+}
+
+declare interface ITagGroupSlice extends ISubTagGroup {
+  children: Omit<ITag, 'parent'>[]
+}
+
+declare interface ISubTagGroup {
+  _id: string
+  name: string
+}
+
+declare interface IDeleteTag {
+  _id: string
+  parent: string
 }
