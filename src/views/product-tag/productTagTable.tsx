@@ -85,9 +85,9 @@ export default function ProductTagTable() {
     toast.loading(
       t => (
         <Box>
-          <p>
+          <span>
             Bạn có muốn xóa nhóm thẻ <span style={{ fontWeight: 700 }}>{tagGroup.name}</span>?
-          </p>
+          </span>
           <Box sx={{ display: 'flex', justifyContent: 'end', columnGap: '12px' }}>
             <Button onClick={() => toast.dismiss(t.id)} type='button' color='error' variant='text'>
               Không
@@ -154,7 +154,7 @@ export default function ProductTagTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tagGroups.length > 0 ? (
+            {tagGroups.length > 0 &&
               tagGroups.map(tagGroup => (
                 <TableRow key={tagGroup._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component='th' scope='row'>
@@ -187,12 +187,10 @@ export default function ProductTagTable() {
                     </IconButton>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <p>Đang lấy dữ liệu</p>
-            )}
+              ))}
           </TableBody>
         </Table>
+        {tagGroups.length === 0 && <p>Đang lấy dữ liệu</p>}
       </TableContainer>
     </Card>
   )

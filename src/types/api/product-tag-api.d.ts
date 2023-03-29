@@ -25,3 +25,7 @@ declare interface IDeleteTag {
   _id: string
   parent: string
 }
+
+declare interface IUpdateTagRes extends ITag {
+  oldParent: string
+}

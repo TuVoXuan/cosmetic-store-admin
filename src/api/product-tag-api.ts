@@ -8,6 +8,7 @@ const URL = `${API}/${ENDPOINT}`
 export const tagApi = {
   getTags: async () => {
     const response = await axiosService.get<IResponseSuccess<ITagGroupSlice[]>>(URL)
+
     return response
   },
 
@@ -18,7 +19,7 @@ export const tagApi = {
   },
 
   updateTag: async (body: IUpdateTag) => {
-    const response = await axiosService.put<IResponseSuccess<ITag>>(URL, body)
+    const response = await axiosService.put<IResponseSuccess<IUpdateTagRes>>(URL, body)
 
     return response
   },

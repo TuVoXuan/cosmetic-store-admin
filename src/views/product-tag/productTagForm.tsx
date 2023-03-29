@@ -11,16 +11,13 @@ import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 import { createTag, updateTag } from '../../redux/actions/tag-action'
 import { toast } from 'react-hot-toast'
 import { useTag } from '../../context/tag'
-import FormLabel from '@mui/material/FormLabel'
-import { Autocomplete, FormControl, InputLabel, MenuItem } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import FormHelperText from '@mui/material/FormHelperText'
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material'
 import { selectTags } from '../../redux/reducers/tag-slice'
 
 interface FormValue {
   name: string
-  weight: IOption
-  tagGroup: IOption
+  weight: string
+  tagGroup: string
 }
 
 const importances: IOption[] = [
@@ -38,8 +35,8 @@ export default function ProductTagForm() {
   const { control, handleSubmit, reset, setValue } = useForm<FormValue>({
     defaultValues: {
       name: '',
-      weight: importances[0],
-      tagGroup: tagGroups[0]
+      weight: '',
+      tagGroup: ''
     }
   })
 
@@ -52,16 +49,14 @@ export default function ProductTagForm() {
           updateTag({
             id: selectedTag._id,
             name: value.name,
-            weight: parseInt(value.weight.value),
-            parent: value.tagGroup.value
+            weight: parseInt(value.weight),
+            parent: value.tagGroup
           })
-        )
+        ).unwrap()
         setSelectedTag(undefined)
         toast.success('Cập nhập thẻ thành công')
       } else {
-        await dispatch(
-          createTag({ name: value.name, weight: parseInt(value.weight.value), parent: value.tagGroup.value })
-        ).unwrap()
+        await dispatch(createTag({ name: value.name, weight: parseInt(value.weight), parent: value.tagGroup })).unwrap()
         toast.success('Tạo thẻ thành công')
       }
       reset()
@@ -75,8 +70,11 @@ export default function ProductTagForm() {
   useEffect(() => {
     if (selectedTag) {
       setValue('name', selectedTag.name)
-      setValue('weight', importances.find(item => item.value === selectedTag.weight.toString()) || importances[0])
-      setValue('tagGroup', tagGroups.find(item => item.value === selectedTag.parent) || tagGroups[0])
+      setValue(
+        'weight',
+        importances.find(item => item.value === selectedTag.weight.toString())?.value || importances[0].value
+      )
+      setValue('tagGroup', tagGroups.find(item => item.value === selectedTag.parent)?.value || tagGroups[0].value)
     } else {
       reset()
     }
@@ -88,6 +86,55 @@ export default function ProductTagForm() {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={5}>
+            <Grid item xs={12} lg={5}>
+              <Controller
+                name={'tagGroup'}
+                rules={{ required: { value: true, message: `Yêu cầu chọn nhóm thẻ` } }}
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <FormControl fullWidth>
+                    <InputLabel id='tagGroup-lable'>Nhóm thẻ</InputLabel>
+                    <Select labelId='tagGroup-lable' onChange={onChange} value={value} error={invalid} label='Nhóm thẻ'>
+                      {tagGroups.length > 0 &&
+                        tagGroups.map(item => (
+                          <MenuItem key={item.value} value={item.value}>
+                            {item.label}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                    {invalid && <FormHelperText error={invalid}>{error?.message}</FormHelperText>}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} lg={5}>
+              <Controller
+                name={'weight'}
+                rules={{ required: { value: true, message: `Yêu cầu chọn trọng số` } }}
+                control={control}
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
+                  <FormControl fullWidth>
+                    <InputLabel id='important-label'>Trọng số</InputLabel>
+                    <Select
+                      labelId='important-label'
+                      onChange={onChange}
+                      value={value}
+                      error={invalid}
+                      label='Trọng số'
+                    >
+                      {importances.map(item => (
+                        <MenuItem key={item.value} value={item.value}>
+                          {item.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {invalid && <FormHelperText error={invalid}>{error?.message}</FormHelperText>}
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
             <Grid item xs={12} lg={5}>
               <FormControl fullWidth>
                 <Controller
@@ -103,63 +150,6 @@ export default function ProductTagForm() {
                       fullWidth
                       label='Tên thẻ'
                       placeholder='Kem chống nắng'
-                    />
-                  )}
-                />
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} lg={5}>
-              <FormControl fullWidth>
-                <Controller
-                  name={'weight'}
-                  rules={{ required: { value: true, message: `Yêu cầu chọn trọng số` } }}
-                  control={control}
-                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                    <Autocomplete
-                      disablePortal
-                      id='weight'
-                      value={value}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      defaultValue={importances.find(item => item.value === selectedTag?.weight.toString())}
-                      options={importances}
-                      sx={{ width: '100%' }}
-                      renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Trọng số' />
-                      )}
-                      onChange={(e, value) => {
-                        onChange(value)
-
-                        return value
-                      }}
-                    />
-                  )}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} lg={5}>
-              <FormControl fullWidth>
-                <Controller
-                  name={'tagGroup'}
-                  rules={{ required: { value: true, message: `Yêu cầu chọn nhóm thẻ` } }}
-                  control={control}
-                  render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
-                    <Autocomplete
-                      disablePortal
-                      id='tagGroup'
-                      value={value}
-                      isOptionEqualToValue={(option, value) => option.value === value.value}
-                      defaultValue={tagGroups.find(item => item.value === selectedTag?.parent)}
-                      options={tagGroups}
-                      sx={{ width: '100%' }}
-                      renderInput={params => (
-                        <TextField {...params} error={invalid} helperText={error?.message} label='Nhóm thẻ' />
-                      )}
-                      onChange={(e, value) => {
-                        onChange(value)
-
-                        return value
-                      }}
                     />
                   )}
                 />

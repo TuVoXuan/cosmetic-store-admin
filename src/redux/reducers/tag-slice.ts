@@ -40,14 +40,31 @@ export const tagsSlice = createSlice({
           tagGroup.children.push({ _id: _id, name: name, weight: weight })
         }
       })
-      .addCase(updateTag.fulfilled, (state, action: PayloadAction<ITag>) => {
-        const { _id, name, parent, weight } = action.payload
-        const tagGroup = state.tagGroups.find(item => item._id === parent)
-        if (tagGroup) {
-          const oldTag = tagGroup.children.find(tag => tag._id === _id)
-          if (oldTag) {
-            oldTag.name = name
-            oldTag.weight = weight
+      .addCase(updateTag.fulfilled, (state, action: PayloadAction<IUpdateTagRes>) => {
+        const { _id, name, parent, weight, oldParent } = action.payload
+
+        if (parent !== oldParent) {
+          const tagGroup = state.tagGroups.find(item => item._id === oldParent)
+          if (tagGroup) {
+            tagGroup.children = tagGroup.children.filter(item => item._id !== _id)
+          }
+
+          const newTagGroup = state.tagGroups.find(item => item._id === parent)
+          if (newTagGroup) {
+            newTagGroup.children.push({
+              _id,
+              name,
+              weight
+            })
+          }
+        } else {
+          const tagGroup = state.tagGroups.find(item => item._id === parent)
+          if (tagGroup) {
+            const oldTag = tagGroup.children.find(tag => tag._id === _id)
+            if (oldTag) {
+              oldTag.name = name
+              oldTag.weight = weight
+            }
           }
         }
       })
