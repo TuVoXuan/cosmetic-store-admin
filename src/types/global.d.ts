@@ -13,6 +13,10 @@ declare interface IOption {
   value: string
 }
 
+declare interface IOptionGroup extends IOption {
+  group: string
+}
+
 declare interface INameTranslateRes {
   _id: string
   name: ITranslate[]

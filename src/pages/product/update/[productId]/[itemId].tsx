@@ -59,7 +59,7 @@ interface Props {
   productId: string
   prodItem: IProdtem
   optionsGroup: IVariationGroup[]
-  tags: IOption[]
+  tags: IOptionGroup[]
   auth: string
 }
 
@@ -72,6 +72,18 @@ export const getServerSideProps = async (context: any) => {
   const resProdItem = await productApi.getProductItem(productId, itemId)
   const tags = await tagApi.getTags()
   const { variations, prodItem } = resProdItem.data.data
+
+  const tagOptions: IOptionGroup[] = []
+
+  for (const tag of tags.data.data) {
+    for (const option of tag.children) {
+      tagOptions.push({
+        value: option._id,
+        label: option.name,
+        group: tag.name
+      })
+    }
+  }
 
   // fetch variation options
   const optionsGroup: IVariationGroup[] = []
@@ -108,7 +120,7 @@ export const getServerSideProps = async (context: any) => {
       productId,
       prodItem,
       optionsGroup,
-      tags: tags.data.data.map(item => ({ label: item.name, value: item._id })),
+      tags: tagOptions,
       auth: auth
     }
   }
@@ -345,6 +357,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
                       disablePortal
                       multiple
                       isOptionEqualToValue={(option, value) => option.value === value.value}
+                      groupBy={option => option.group}
                       defaultValue={tags.filter(item => prodItem.tags.includes(item.value))}
                       id={'tags'}
                       options={tags}
