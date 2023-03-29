@@ -146,6 +146,11 @@ export default function ProductTagTable() {
       </Box>
       <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label='simple table'>
+          <colgroup>
+            <col width='15%' />
+            <col width='70%' />
+            <col width='15%' />
+          </colgroup>
           <TableHead>
             <TableRow>
               <TableCell>Nhóm thẻ</TableCell>
@@ -160,15 +165,17 @@ export default function ProductTagTable() {
                   <TableCell component='th' scope='row'>
                     {tagGroup.name}
                   </TableCell>
-                  <TableCell align='center'>
-                    {tagGroup.children.map(tag => (
-                      <Chip
-                        key={tag._id}
-                        label={tag.name}
-                        onClick={handleOnClickTag({ ...tag, parent: tagGroup._id })}
-                        onDelete={handleConfirmDeleteTag({ ...tag, parent: tagGroup._id })}
-                      />
-                    ))}
+                  <TableCell align='left'>
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                      {tagGroup.children.map(tag => (
+                        <Chip
+                          key={tag._id}
+                          label={tag.name}
+                          onClick={handleOnClickTag({ ...tag, parent: tagGroup._id })}
+                          onDelete={handleConfirmDeleteTag({ ...tag, parent: tagGroup._id })}
+                        />
+                      ))}
+                    </Box>
                   </TableCell>
                   <TableCell align='right'>
                     <IconButton
