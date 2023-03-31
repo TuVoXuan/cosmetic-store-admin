@@ -28,6 +28,7 @@ import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 import { useRouter } from 'next/router'
 import { IFilterProduct, IProductTable } from '../../types/api/product-api'
 import { IFilterProductForm, useFilterProduct } from '../../context/product'
+import Link from 'next/link'
 
 const Row = (props: { row: IProductTable }) => {
   // ** Props
@@ -214,13 +215,17 @@ const Row = (props: { row: IProductTable }) => {
                         >
                           <DeleteIcon />
                         </IconButton>
-                        <IconButton
-                          onClick={() => router.push(`/product/update/${row._id}/${item._id}`)}
-                          aria-label='delete'
-                          color='primary'
-                        >
-                          <EditIcon />
-                        </IconButton>
+                        <Link passHref href={`/product/update/${row._id}/${item._id}`}>
+                          <a>
+                            <IconButton
+                              // onClick={() => router.push(`/product/update/${row._id}/${item._id}`)}
+                              aria-label='delete'
+                              color='primary'
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </a>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
