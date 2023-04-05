@@ -60,18 +60,25 @@ export default function CreateAndBrandForm() {
   const onSubmit = async (values: FormValue) => {
     let result
     if (selectedBrand) {
-      result = dispatch(
-        updateBrand({
-          _id: selectedBrand._id,
-          name: values.name,
-          logo: logoFile
-        })
-      ).unwrap()
-
-      return
+      if (logo) {
+        result = dispatch(
+          updateBrand({
+            _id: selectedBrand._id,
+            name: values.name,
+            logo: logoFile
+          })
+        ).unwrap()
+      } else {
+        result = dispatch(
+          updateBrand({
+            _id: selectedBrand._id,
+            name: values.name
+          })
+        ).unwrap()
+      }
     }
 
-    if (logoFile) {
+    if (logoFile && !selectedBrand) {
       result = dispatch(
         createBrand({
           name: values.name,
