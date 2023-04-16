@@ -5,13 +5,15 @@ import variationReducer from '../redux/reducers/variation-slide'
 import brandReducer from '../redux/reducers/brand-slice'
 import tagReducer from '../redux/reducers/tag-slice'
 import userReducer from '../redux/reducers/user-slice'
+import dashboardSlice from '../redux/reducers/dashboard-slice'
 
 const combineReducer = combineReducers({
   products: productReducer,
   variations: variationReducer,
   brands: brandReducer,
   tags: tagReducer,
-  user: userReducer
+  user: userReducer,
+  dashboard: dashboardSlice
 })
 
 const rootReducer: Reducer = (state: RootState, action: AnyAction) => {

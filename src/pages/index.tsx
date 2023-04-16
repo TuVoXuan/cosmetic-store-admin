@@ -15,14 +15,14 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 
 // ** Demo Components Imports
 import Table from 'src/views/dashboard/Table'
-import Trophy from 'src/views/dashboard/Trophy'
 import TotalEarning from 'src/views/dashboard/TotalEarning'
 import StatisticsCard from 'src/views/dashboard/StatisticsCard'
-import WeeklyOverview from 'src/views/dashboard/WeeklyOverview'
+import OrderRevenue from 'src/views/dashboard/OrderRevenue'
 import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import ProtectRoute from '../layouts/components/ProtectRoute'
 import { getCookie } from 'cookies-next'
+import OrderOverview from '../views/dashboard/OrderOverview'
 
 interface Props {
   auth: string
@@ -33,18 +33,16 @@ const Dashboard = ({ auth }: Props) => {
     <ProtectRoute auth={auth}>
       <ApexChartWrapper>
         <Grid container spacing={6}>
-          <Grid item xs={12} md={4}>
-            <Trophy />
-          </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12}>
             <StatisticsCard />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <WeeklyOverview />
+          <Grid item xs={12} md={5}>
+            <OrderOverview />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <TotalEarning />
+          <Grid item xs={12} md={7}>
+            <OrderRevenue />
           </Grid>
+
           <Grid item xs={12} md={6} lg={4}>
             <Grid container spacing={6}>
               <Grid item xs={6}>
@@ -68,34 +66,10 @@ const Dashboard = ({ auth }: Props) => {
                   icon={<CurrencyUsd />}
                 />
               </Grid>
-              <Grid item xs={6}>
-                <CardStatisticsVerticalComponent
-                  stats='862'
-                  trend='negative'
-                  trendNumber='-18%'
-                  title='New Project'
-                  subtitle='Yearly Project'
-                  icon={<BriefcaseVariantOutline />}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <CardStatisticsVerticalComponent
-                  stats='15'
-                  color='warning'
-                  trend='negative'
-                  trendNumber='-18%'
-                  subtitle='Last Week'
-                  title='Sales Queries'
-                  icon={<HelpCircleOutline />}
-                />
-              </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} md={6} lg={4}>
             <SalesByCountries />
-          </Grid>
-          <Grid item xs={12} md={12} lg={8}>
-            <DepositWithdraw />
           </Grid>
           <Grid item xs={12}>
             <Table />
