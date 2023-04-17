@@ -71,7 +71,7 @@ const OrderRevenue = () => {
     plotOptions: {
       bar: {
         borderRadius: 9,
-        distributed: true,
+        distributed: false,
         columnWidth: '40%',
         endingShape: 'rounded',
         startingShape: 'rounded'
@@ -92,7 +92,7 @@ const OrderRevenue = () => {
       }
     },
     dataLabels: { enabled: false },
-    colors: chartDataRevenue.map(item => theme.palette.primary.main),
+    // colors: [theme.palette.primary.main, theme.palette.secondary.main],
     states: {
       hover: {
         filter: { type: 'none' }
@@ -102,7 +102,7 @@ const OrderRevenue = () => {
       }
     },
     xaxis: {
-      type: 'category',
+      // type: 'category',
       tickPlacement: 'on',
       labels: { show: true },
       axisTicks: { show: false },
@@ -128,9 +128,9 @@ const OrderRevenue = () => {
         handleFetchOrderRevenue(timeType, 'completed')
       }
     } else if (timeType === 'week') {
-      console.log('vo')
       if (orderRevenueOrRefund.week.refund.length === 0) {
         handleFetchOrderRevenue(timeType, 'notAcceptOrder')
+        handleFetchOrderRevenue(timeType, 'cancelled')
       }
       if (orderRevenueOrRefund.week.refund.length === 0) {
         handleFetchOrderRevenue(timeType, 'completed')
@@ -145,6 +145,7 @@ const OrderRevenue = () => {
   useEffect(() => {
     handleFetchOrderRevenue(timeType, 'completed')
     handleFetchOrderRevenue(timeType, 'notAcceptOrder')
+    handleFetchOrderRevenue(timeType, 'cancelled')
   }, [])
 
   useEffect(() => {
@@ -160,6 +161,7 @@ const OrderRevenue = () => {
     }
     setChartDataRevenue(revenue)
     setChartDataRefund(refund)
+    console.log('refund: ', refund)
   }, [timeType, orderRevenueOrRefund])
 
   return (
@@ -178,8 +180,8 @@ const OrderRevenue = () => {
             height={205}
             options={options}
             series={[
-              { name: 'Doanh thu', data: chartDataRevenue },
-              { name: 'Hoàn tiền', data: chartDataRefund }
+              { name: 'Doanh thu', data: chartDataRevenue, color: theme.palette.primary.main },
+              { name: 'Hoàn tiền', data: chartDataRefund, color: theme.palette.error.main }
             ]}
           />
         )}
