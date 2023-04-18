@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../../store/configureStore'
-import { getOrderDailyReport, getOrderOverview, getOrderRevenueOrRefund } from '../actions/dashboard-action'
+import {
+  getOrderDailyReport,
+  getOrderOverview,
+  getOrderRevenueOrRefund,
+  getSellingProduct
+} from '../actions/dashboard-action'
+import { IResGetSellingProducts, ISellingProduct } from '../../types/api/product-api'
 
 export interface DashboardState {
   orderRevenueOrRefund: {
@@ -18,6 +24,10 @@ export interface DashboardState {
     week: IOrderOverview[]
   }
   dailyReport: IOrderDailyReport
+  sellingProducts: {
+    week: ISellingProduct[]
+    month: ISellingProduct[]
+  }
 }
 
 const initialState: DashboardState = {
@@ -40,6 +50,10 @@ const initialState: DashboardState = {
     numOfCompletedOrders: 0,
     numOfOrders: 0,
     totalRevenueToday: 0
+  },
+  sellingProducts: {
+    week: [],
+    month: []
   }
 }
 
@@ -73,6 +87,15 @@ export const dashboardSlice = createSlice({
     })
     builder.addCase(getOrderDailyReport.fulfilled, (state, action: PayloadAction<IOrderDailyReport>) => {
       state.dailyReport = action.payload
+    })
+    builder.addCase(getSellingProduct.fulfilled, (state, action: PayloadAction<IResGetSellingProducts>) => {
+      const { timeType, data } = action.payload
+
+      if (timeType === 'week') {
+        state.sellingProducts.week = data
+      } else if (timeType === 'month') {
+        state.sellingProducts.month = data
+      }
     })
   }
 })

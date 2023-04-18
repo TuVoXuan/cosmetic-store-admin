@@ -56,9 +56,9 @@ interface FormValue {
 const TabProductItem = () => {
   // ** State
   const [thumbnailFile, setThumbnailFile] = useState<File>()
-  const [thumbnail, setThumbnail] = useState<string>('/images/avatars/1.png')
+  const [thumbnail, setThumbnail] = useState<string>('/images/cards/default-img.png')
   const [imgFiles, setImgFiles] = useState<File[]>([])
-  const [imgSrc, setImgSrc] = useState<string[]>(['/images/avatars/1.png'])
+  const [imgSrc, setImgSrc] = useState<string[]>(['/images/cards/default-img.png'])
   const [productNames, setProductNames] = useState<IProductNameOption[]>([])
   const [variationsGroup, setVariationsGroup] = useState<IVariationGroup[]>([])
   const [tags, setTags] = useState<IOption[]>([])
@@ -268,7 +268,7 @@ const TabProductItem = () => {
                       if (thumbnailRef.current) {
                         thumbnailRef.current.value = ''
                       }
-                      setThumbnail('/images/avatars/1.png')
+                      setThumbnail('/images/cards/default-img.png')
                     }}
                   >
                     Reset
@@ -320,7 +320,7 @@ const TabProductItem = () => {
                       if (imagesRef.current) {
                         imagesRef.current.value = ''
                       }
-                      setImgSrc(['/images/avatars/1.png'])
+                      setImgSrc(['/images/cards/default-img.png'])
                     }}
                   >
                     Reset

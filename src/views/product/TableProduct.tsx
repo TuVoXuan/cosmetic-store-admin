@@ -182,11 +182,10 @@ const Row = (props: { row: IProductTable }) => {
               <Table size='small' aria-label='purchases'>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Variations</TableCell>
-                    <TableCell>Price</TableCell>
-                    <TableCell align='right'>Quantity</TableCell>
-                    <TableCell align='right'>Sale</TableCell>
-                    <TableCell align='right'>Actions</TableCell>
+                    <TableCell>Biến thể</TableCell>
+                    <TableCell>Giá tiền</TableCell>
+                    <TableCell align='right'>Số lượng</TableCell>
+                    <TableCell align='right'>Hành động</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -199,7 +198,6 @@ const Row = (props: { row: IProductTable }) => {
                       </TableCell>
                       <TableCell>{item.price}</TableCell>
                       <TableCell align='right'>{item.quantity}</TableCell>
-                      <TableCell align='right'>{'10%'}</TableCell>
                       <TableCell align='right'>
                         <IconButton
                           onClick={() =>

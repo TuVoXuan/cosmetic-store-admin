@@ -126,3 +126,21 @@ declare interface IFilterProduct extends IPagePaginationParam {
   brands?: string
   category?: string
 }
+
+declare interface ISellingProduct {
+  productId: string
+  itemId: string
+  thumbnail: string
+  name: string
+  sold: number
+}
+
+declare interface IGetSellingProducts {
+  timeType: 'week' | 'month'
+  limit: number
+}
+
+declare interface IResGetSellingProducts {
+  timeType: 'week' | 'month'
+  data: ISellingProduct[]
+}

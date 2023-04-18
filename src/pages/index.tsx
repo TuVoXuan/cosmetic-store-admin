@@ -4,8 +4,6 @@ import Grid from '@mui/material/Grid'
 // ** Icons Imports
 import Poll from 'mdi-material-ui/Poll'
 import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
-import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
-import BriefcaseVariantOutline from 'mdi-material-ui/BriefcaseVariantOutline'
 
 // ** Custom Components Imports
 import CardStatisticsVerticalComponent from 'src/@core/components/card-statistics/card-stats-vertical'
@@ -15,14 +13,13 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 
 // ** Demo Components Imports
 import Table from 'src/views/dashboard/Table'
-import TotalEarning from 'src/views/dashboard/TotalEarning'
 import StatisticsCard from 'src/views/dashboard/StatisticsCard'
 import OrderRevenue from 'src/views/dashboard/OrderRevenue'
-import DepositWithdraw from 'src/views/dashboard/DepositWithdraw'
 import SalesByCountries from 'src/views/dashboard/SalesByCountries'
 import ProtectRoute from '../layouts/components/ProtectRoute'
 import { getCookie } from 'cookies-next'
 import OrderOverview from '../views/dashboard/OrderOverview'
+import SellingProducts from '../views/dashboard/sellingProducts'
 
 interface Props {
   auth: string
@@ -43,7 +40,7 @@ const Dashboard = ({ auth }: Props) => {
             <OrderRevenue />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <Grid container spacing={6}>
               <Grid item xs={6}>
                 <CardStatisticsVerticalComponent
@@ -67,12 +64,15 @@ const Dashboard = ({ auth }: Props) => {
                 />
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
+          </Grid> */}
+          {/* <Grid item xs={12} md={6} lg={4}>
             <SalesByCountries />
           </Grid>
           <Grid item xs={12}>
             <Table />
+          </Grid> */}
+          <Grid item xs={12}>
+            <SellingProducts />
           </Grid>
         </Grid>
       </ApexChartWrapper>

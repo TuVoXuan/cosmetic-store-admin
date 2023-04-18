@@ -1,4 +1,5 @@
 import { IGetOrdersParam, IOrderDetail, IOrderTable, IPagePagination, IUpdateOrderStatus } from '../types/api/order-api'
+import { ISellingProduct } from '../types/api/product-api'
 import axiosService from './axios-service'
 
 const API = process.env.API_URL
@@ -70,5 +71,17 @@ export const orderApi = {
     const response = await axiosService.get<IResponseSuccess<IOrderDailyReport>>(`${URL}/daily-report`)
 
     return response
+  },
+
+  getSellingProductsFollowTime: async (timeType: 'week' | 'month', limit: number) => {
+    const response = await axiosService.post<IResponseSuccess<ISellingProduct[]>>(
+      `${URL}/selling-products-follow-time`,
+      {
+        timeReport: timeType,
+        limit
+      }
+    )
+
+    return response.data.data
   }
 }
