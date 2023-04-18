@@ -81,7 +81,7 @@ const OrderRevenue = () => {
       width: 2,
       colors: [theme.palette.background.paper]
     },
-    legend: { show: false },
+    legend: { show: true },
     grid: {
       strokeDashArray: 7,
       padding: {
