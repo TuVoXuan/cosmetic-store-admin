@@ -72,7 +72,7 @@ export default function TabFilter({ value }: Props) {
                   showYearDropdown
                   showMonthDropdown
                   placeholderText='MM-DD-YYYY'
-                  customInput={<CustomInput label='Đến ngày' />}
+                  customInput={<CustomInput label='Từ ngày' />}
                   onChange={(date: Date) => setFromDate(date)}
                 />
               </DatePickerWrapper>

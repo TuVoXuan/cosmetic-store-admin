@@ -101,7 +101,7 @@ const TabAccount = () => {
                   fullWidth
                   error={invalid}
                   helperText={error?.message}
-                  label='Name'
+                  label='Tên'
                   placeholder='John Doe'
                 />
               )}
@@ -149,9 +149,6 @@ const TabAccount = () => {
           <Grid item xs={12}>
             <Button disabled={loading} variant='contained' type='submit' sx={{ marginRight: 3.5 }}>
               {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
-            </Button>
-            <Button type='reset' variant='outlined' color='secondary'>
-              Reset
             </Button>
           </Grid>
         </Grid>

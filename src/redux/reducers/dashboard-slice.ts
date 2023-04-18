@@ -63,17 +63,36 @@ export const dashboardSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(getOrderRevenueOrRefund.fulfilled, (state, action: PayloadAction<IRevenueOrRefundRes>) => {
-      if (action.payload.status === 'completed') {
-        if (action.payload.data.length === 12) {
-          state.orderRevenueOrRefund.month.revenue = action.payload.data
-        } else if (action.payload.data.length === 7) {
-          state.orderRevenueOrRefund.week.revenue = action.payload.data
+      const { status, data } = action.payload
+      if (status === 'completed') {
+        if (data.length === 12) {
+          state.orderRevenueOrRefund.month.revenue = data
+        } else if (data.length === 7) {
+          state.orderRevenueOrRefund.week.revenue = data
         }
-      } else if (action.payload.status === 'notAcceptOrder') {
-        if (action.payload.data.length === 12) {
-          state.orderRevenueOrRefund.month.refund = action.payload.data
-        } else if (action.payload.data.length === 7) {
-          state.orderRevenueOrRefund.week.refund = action.payload.data
+      } else if (status === 'notAcceptOrder' || status === 'cancelled') {
+        if (data.length === 12) {
+          if (state.orderRevenueOrRefund.month.refund.length === 0) {
+            state.orderRevenueOrRefund.month.refund = data
+          } else {
+            for (const month of state.orderRevenueOrRefund.month.refund) {
+              const foundMonth = data.find(item => item.label === month.label)
+              if (foundMonth) {
+                month.value += foundMonth.value
+              }
+            }
+          }
+        } else if (data.length === 7) {
+          if (state.orderRevenueOrRefund.week.refund.length === 0) {
+            state.orderRevenueOrRefund.week.refund = data
+          } else {
+            for (const day of state.orderRevenueOrRefund.week.refund) {
+              const foundDay = data.find(item => item.label === day.label)
+              if (foundDay) {
+                day.value += foundDay.value
+              }
+            }
+          }
         }
       }
     })
