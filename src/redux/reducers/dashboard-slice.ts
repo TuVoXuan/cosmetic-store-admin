@@ -4,6 +4,7 @@ import {
   getOrderDailyReport,
   getOrderOverview,
   getOrderRevenueOrRefund,
+  getRevenueOfLastYear,
   getSellingProduct
 } from '../actions/dashboard-action'
 import { IResGetSellingProducts, ISellingProduct } from '../../types/api/product-api'
@@ -11,12 +12,12 @@ import { IResGetSellingProducts, ISellingProduct } from '../../types/api/product
 export interface DashboardState {
   orderRevenueOrRefund: {
     month: {
-      revenue: IRevenueOrRefundValue[]
-      refund: IRevenueOrRefundValue[]
+      thisYear: IRevenueValue[]
+      lastYear: IRevenueValue[]
     }
     week: {
-      revenue: IRevenueOrRefundValue[]
-      refund: IRevenueOrRefundValue[]
+      revenue: IRevenueValue[]
+      refund: IRevenueValue[]
     }
   }
   orderOverview: {
@@ -33,8 +34,8 @@ export interface DashboardState {
 const initialState: DashboardState = {
   orderRevenueOrRefund: {
     month: {
-      refund: [],
-      revenue: []
+      thisYear: [],
+      lastYear: []
     },
     week: {
       refund: [],
@@ -62,38 +63,13 @@ export const dashboardSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(getOrderRevenueOrRefund.fulfilled, (state, action: PayloadAction<IRevenueOrRefundRes>) => {
-      const { status, data } = action.payload
-      if (status === 'completed') {
-        if (data.length === 12) {
-          state.orderRevenueOrRefund.month.revenue = data
-        } else if (data.length === 7) {
-          state.orderRevenueOrRefund.week.revenue = data
-        }
-      } else if (status === 'notAcceptOrder' || status === 'cancelled') {
-        if (data.length === 12) {
-          if (state.orderRevenueOrRefund.month.refund.length === 0) {
-            state.orderRevenueOrRefund.month.refund = data
-          } else {
-            for (const month of state.orderRevenueOrRefund.month.refund) {
-              const foundMonth = data.find(item => item.label === month.label)
-              if (foundMonth) {
-                month.value += foundMonth.value
-              }
-            }
-          }
-        } else if (data.length === 7) {
-          if (state.orderRevenueOrRefund.week.refund.length === 0) {
-            state.orderRevenueOrRefund.week.refund = data
-          } else {
-            for (const day of state.orderRevenueOrRefund.week.refund) {
-              const foundDay = data.find(item => item.label === day.label)
-              if (foundDay) {
-                day.value += foundDay.value
-              }
-            }
-          }
-        }
+    builder.addCase(getOrderRevenueOrRefund.fulfilled, (state, action: PayloadAction<IRevenueValue[]>) => {
+      const data = action.payload
+
+      if (data.length === 12) {
+        state.orderRevenueOrRefund.month.thisYear = data
+      } else if (data.length === 7) {
+        state.orderRevenueOrRefund.week.revenue = data
       }
     })
     builder.addCase(getOrderOverview.fulfilled, (state, action: PayloadAction<IOrderOverviewRes>) => {
@@ -115,6 +91,9 @@ export const dashboardSlice = createSlice({
       } else if (timeType === 'month') {
         state.sellingProducts.month = data
       }
+    })
+    builder.addCase(getRevenueOfLastYear.fulfilled, (state, action: PayloadAction<IRevenueValue[]>) => {
+      state.orderRevenueOrRefund.month.lastYear = action.payload
     })
   }
 })

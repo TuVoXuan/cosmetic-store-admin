@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
 import { useTheme } from '@mui/material/styles'
 import CardHeader from '@mui/material/CardHeader'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-
-// ** Icons Imports
-import DotsVertical from 'mdi-material-ui/DotsVertical'
 
 // ** Third Party Imports
 import { ApexOptions } from 'apexcharts'
@@ -24,7 +17,9 @@ import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 import { selectDashboard } from '../../redux/reducers/dashboard-slice'
-import { getOrderRevenueOrRefund } from '../../redux/actions/dashboard-action'
+import { getOrderRevenueOrRefund, getRevenueOfLastYear } from '../../redux/actions/dashboard-action'
+import { Autocomplete, Box, TextField } from '@mui/material'
+import categoryApi from '../../api/category-api'
 
 interface Props {
   timeType: string
@@ -37,7 +32,7 @@ const RevenueTimeSelect = ({ timeType, onChange }: Props) => {
   }
 
   return (
-    <FormControl fullWidth size='small'>
+    <FormControl sx={{ width: 200 }}>
       <InputLabel id='demo-simple-select-label'>Thời gian</InputLabel>
       <Select
         labelId='demo-simple-select-label'
@@ -60,6 +55,8 @@ const OrderRevenue = () => {
   const [timeType, setTimeType] = useState('month')
   const [chartDataRevenue, setChartDataRevenue] = useState<IChartData[]>([])
   const [chartDataRefund, setChartDataRefund] = useState<IChartData[]>([])
+  const [categories, setCategories] = useState<IOption[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<IOption>({ label: 'Tất cả', value: 'All' })
 
   const { orderRevenueOrRefund } = useAppSelector(selectDashboard)
 
@@ -81,7 +78,7 @@ const OrderRevenue = () => {
       width: 2,
       colors: [theme.palette.background.paper]
     },
-    legend: { show: false },
+    legend: { show: true },
     grid: {
       strokeDashArray: 7,
       padding: {
@@ -121,48 +118,84 @@ const OrderRevenue = () => {
   const handleChangeTimeType = (timeType: string) => {
     setTimeType(timeType)
     if (timeType === 'month') {
-      if (orderRevenueOrRefund.month.refund.length === 0) {
-        handleFetchOrderRevenue(timeType, 'notAcceptOrder')
+      if (orderRevenueOrRefund.month.thisYear.length === 0) {
+        handleFetchOrderRevenue(timeType, selectedCategory.value)
       }
-      if (orderRevenueOrRefund.month.refund.length === 0) {
-        handleFetchOrderRevenue(timeType, 'completed')
+
+      if (orderRevenueOrRefund.month.lastYear.length === 0) {
+        handleFetchRevenueOfLasYear(selectedCategory.value)
       }
     } else if (timeType === 'week') {
-      if (orderRevenueOrRefund.week.refund.length === 0) {
-        handleFetchOrderRevenue(timeType, 'notAcceptOrder')
-        handleFetchOrderRevenue(timeType, 'cancelled')
-      }
-      if (orderRevenueOrRefund.week.refund.length === 0) {
-        handleFetchOrderRevenue(timeType, 'completed')
+      if (orderRevenueOrRefund.week.revenue.length === 0) {
+        handleFetchOrderRevenue(timeType, 'All')
       }
     }
   }
 
-  const handleFetchOrderRevenue = async (timeType: string, status: string) => {
-    await dispatch(getOrderRevenueOrRefund({ status, timeReport: timeType }))
+  const handleFetchOrderRevenue = async (timeType: string, categoryId: string) => {
+    await dispatch(getOrderRevenueOrRefund({ timeReport: timeType, categoryId: categoryId }))
+  }
+
+  const handleFetchRevenueOfLasYear = async (categoryId: string) => {
+    await dispatch(getRevenueOfLastYear(categoryId)).unwrap()
+  }
+
+  const handleSelectChange = (value: IOption) => {
+    setSelectedCategory(value)
+  }
+
+  const handleGetCategories = async () => {
+    try {
+      const res = await categoryApi.getCategory()
+      const options: IOption[] = res.data.data.map(item => {
+        let option: IOption = { value: '', label: '' }
+        for (let i = 0; i < item.name.length; i++) {
+          const element = item.name[i]
+          if (element.language === 'vi') {
+            option = {
+              label: element.value,
+              value: item._id
+            }
+          }
+        }
+
+        return option
+      })
+
+      options.unshift({ label: 'Tất cả', value: 'All' })
+
+      setCategories(options)
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 
   useEffect(() => {
-    handleFetchOrderRevenue(timeType, 'completed')
-    handleFetchOrderRevenue(timeType, 'notAcceptOrder')
-    handleFetchOrderRevenue(timeType, 'cancelled')
+    if (timeType === 'month') {
+      handleFetchRevenueOfLasYear(selectedCategory.value)
+    }
+    handleFetchOrderRevenue(timeType, selectedCategory.value)
+    handleGetCategories()
   }, [])
 
   useEffect(() => {
     let revenue: IChartData[] = []
-    let refund: IChartData[] = []
+    let lastYear: IChartData[] = []
 
     if (timeType === 'month') {
-      revenue = orderRevenueOrRefund.month.revenue.map(item => ({ x: item.label, y: item.value }))
-      refund = orderRevenueOrRefund.month.refund.map(item => ({ x: item.label, y: item.value }))
+      revenue = orderRevenueOrRefund.month.thisYear.map(item => ({ x: item.label, y: item.value }))
+      lastYear = orderRevenueOrRefund.month.lastYear.map(item => ({ x: item.label, y: item.value }))
+      setChartDataRefund(lastYear)
     } else if (timeType === 'week') {
       revenue = orderRevenueOrRefund.week.revenue.map(item => ({ x: item.label, y: item.value }))
-      refund = orderRevenueOrRefund.week.refund.map(item => ({ x: item.label, y: item.value }))
     }
     setChartDataRevenue(revenue)
-    setChartDataRefund(refund)
-    console.log('refund: ', refund)
   }, [timeType, orderRevenueOrRefund])
+
+  useEffect(() => {
+    handleFetchOrderRevenue(timeType, selectedCategory.value)
+    handleFetchRevenueOfLasYear(selectedCategory.value)
+  }, [selectedCategory])
 
   return (
     <Card>
@@ -171,7 +204,30 @@ const OrderRevenue = () => {
         titleTypographyProps={{
           sx: { lineHeight: '2rem !important', letterSpacing: '0.15px !important' }
         }}
-        action={<RevenueTimeSelect onChange={handleChangeTimeType} timeType={timeType} />}
+        action={
+          <Box sx={{ display: 'flex', columnGap: 4 }}>
+            <FormControl sx={{ width: 300 }}>
+              {timeType === 'month' && (
+                <Autocomplete
+                  disablePortal
+                  id='category'
+                  options={categories}
+                  value={selectedCategory}
+                  sx={{ width: '100%' }}
+                  renderInput={params => <TextField {...params} label='Danh mục' />}
+                  onChange={(e, value) => {
+                    if (value) {
+                      handleSelectChange(value)
+                    }
+
+                    return value
+                  }}
+                />
+              )}
+            </FormControl>
+            <RevenueTimeSelect onChange={handleChangeTimeType} timeType={timeType} />
+          </Box>
+        }
       />
       <CardContent sx={{ '& .apexcharts-xcrosshairs.apexcharts-active': { opacity: 0 } }}>
         {chartDataRefund.length > 0 && chartDataRevenue.length > 0 && (
@@ -179,10 +235,14 @@ const OrderRevenue = () => {
             type='bar'
             height={205}
             options={options}
-            series={[
-              { name: 'Doanh thu', data: chartDataRevenue, color: theme.palette.primary.main },
-              { name: 'Hoàn tiền', data: chartDataRefund, color: theme.palette.error.main }
-            ]}
+            series={
+              timeType === 'month'
+                ? [
+                    { name: 'Năm nay', data: chartDataRevenue, color: theme.palette.primary.main },
+                    { name: 'Năm trước', data: chartDataRefund, color: theme.palette.warning.main }
+                  ]
+                : [{ name: 'Doanh thu', data: chartDataRevenue, color: theme.palette.primary.main }]
+            }
           />
         )}
       </CardContent>

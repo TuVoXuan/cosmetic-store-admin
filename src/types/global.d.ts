@@ -27,19 +27,19 @@ declare interface IVariationGroup {
   variationOptions: IOption[]
 }
 
-declare interface IRevenueOrRefundValue {
+declare interface IRevenueValue {
   value: number
   label: string
 }
 
-declare interface IRevenueOrRefundReq {
+declare interface IRevenueReq {
   timeReport: string
-  status: string
+  categoryId: string
 }
 
-declare interface IRevenueOrRefundRes {
+declare interface IRevenueRes {
   status: string
-  data: IRevenueOrRefundValue[]
+  data: IRevenueValue[]
 }
 
 declare interface IChartData {

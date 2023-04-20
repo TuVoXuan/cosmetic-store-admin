@@ -50,11 +50,8 @@ export const orderApi = {
     return response.data.data
   },
 
-  getOrderRevenueOrRefund: async (body: IRevenueOrRefundReq) => {
-    const response = await axiosService.post<IResponseSuccess<IRevenueOrRefundValue[]>>(
-      `${URL}/revenure-or-refund-follow-time`,
-      body
-    )
+  getOrderRevenueOrRefund: async (body: IRevenueReq) => {
+    const response = await axiosService.post<IResponseSuccess<IRevenueValue[]>>(`${URL}/revenue-follow-time`, body)
 
     return response
   },
@@ -83,5 +80,13 @@ export const orderApi = {
     )
 
     return response.data.data
+  },
+
+  getRevenueOfLastYear: async (categoryId: string) => {
+    const response = await axiosService.get<IResponseSuccess<IRevenueValue[]>>(
+      `${URL}/revenue-of-last-year/${categoryId}`
+    )
+
+    return response
   }
 }

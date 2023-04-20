@@ -4,14 +4,11 @@ import { IGetSellingProducts } from '../../types/api/product-api'
 
 export const getOrderRevenueOrRefund = createAsyncThunk(
   'dashboard/order-revenue',
-  async (body: IRevenueOrRefundReq, thunkAPI) => {
+  async (body: IRevenueReq, thunkAPI) => {
     try {
       const response = await orderApi.getOrderRevenueOrRefund(body)
 
-      return {
-        status: body.status,
-        data: response.data.data
-      }
+      return response.data.data
     } catch (error) {
       return thunkAPI.rejectWithValue(error)
     }
@@ -56,3 +53,13 @@ export const getSellingProduct = createAsyncThunk(
     }
   }
 )
+
+export const getRevenueOfLastYear = createAsyncThunk('dashboard/revenue-last-year', async (body: string, thunkAPI) => {
+  try {
+    const response = await orderApi.getRevenueOfLastYear(body)
+
+    return response.data.data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error)
+  }
+})

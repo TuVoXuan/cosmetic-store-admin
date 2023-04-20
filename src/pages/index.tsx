@@ -36,7 +36,7 @@ const Dashboard = ({ auth }: Props) => {
           <Grid item xs={12} md={5}>
             <OrderOverview />
           </Grid>
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={12}>
             <OrderRevenue />
           </Grid>
 
