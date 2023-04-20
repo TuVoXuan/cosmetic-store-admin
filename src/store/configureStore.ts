@@ -6,6 +6,7 @@ import brandReducer from '../redux/reducers/brand-slice'
 import tagReducer from '../redux/reducers/tag-slice'
 import userReducer from '../redux/reducers/user-slice'
 import dashboardSlice from '../redux/reducers/dashboard-slice'
+import settingSlice from '../redux/reducers/setting-slice'
 
 const combineReducer = combineReducers({
   products: productReducer,
@@ -13,7 +14,8 @@ const combineReducer = combineReducers({
   brands: brandReducer,
   tags: tagReducer,
   user: userReducer,
-  dashboard: dashboardSlice
+  dashboard: dashboardSlice,
+  setting: settingSlice
 })
 
 const rootReducer: Reducer = (state: RootState, action: AnyAction) => {
