@@ -26,10 +26,12 @@ declare interface IProductNameRes {
   _id: string
   name: ITranslate[]
   variations: string[]
+  description: ITranslate[]
 }
 
 declare interface IProductNameOption extends IOption {
   variations: string[]
+  description: string
 }
 
 declare interface IProductItemTable {

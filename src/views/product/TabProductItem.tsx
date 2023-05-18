@@ -50,6 +50,7 @@ interface FormValue {
   images: any
   price: number
   quantity: number
+  tags: IOptionGroup[]
   [index: string]: any
 }
 
@@ -61,7 +62,8 @@ const TabProductItem = () => {
   const [imgSrc, setImgSrc] = useState<string[]>(['/images/cards/default-img.png'])
   const [productNames, setProductNames] = useState<IProductNameOption[]>([])
   const [variationsGroup, setVariationsGroup] = useState<IVariationGroup[]>([])
-  const [tags, setTags] = useState<IOption[]>([])
+  const [tags, setTags] = useState<IOptionGroup[]>([])
+  const [selectedProd, setSeletedProd] = useState<IProductNameOption>()
 
   // **Ref
   const imagesRef = useRef<HTMLInputElement | null>(null)
@@ -76,6 +78,7 @@ const TabProductItem = () => {
     handleSubmit,
     formState: { errors },
     getValues,
+    setValue,
     reset
   } = useForm<FormValue>({
     defaultValues: {
@@ -114,14 +117,15 @@ const TabProductItem = () => {
     try {
       const res = await productApi.getListName()
       const options: IProductNameOption[] = res.data.data.map(item => {
-        let option: IProductNameOption = { value: '', label: '', variations: [] }
+        let option: IProductNameOption = { value: '', label: '', variations: [], description: '' }
         for (let i = 0; i < item.name.length; i++) {
           const element = item.name[i]
           if (element.language === 'vi') {
             option = {
               label: element.value,
               value: item._id,
-              variations: item.variations
+              variations: item.variations,
+              description: item.description.find((des) => des.language === 'vi')?.value || ''
             }
           }
         }
@@ -173,6 +177,18 @@ const TabProductItem = () => {
     }
   }
 
+  const handleChangeProduct = (value: IProductNameOption) => {
+    const existTagInDes: IOptionGroup[] = []
+    for (const tag of tags) {
+      const existed = value.description.toLowerCase().includes(tag.label.toLowerCase())
+      if (existed) {
+        existTagInDes.push(tag)
+      }
+    }
+    console.log("existTagInDes: ", existTagInDes);
+    setValue('tags', existTagInDes)
+  }
+
   const onSubmit = (data: any) => {
     const formData = new FormData()
     formData.append('thumbnail', thumbnailFile as File)
@@ -209,10 +225,42 @@ const TabProductItem = () => {
   }
 
   const fetchTags = async () => {
-    const response = await tagApi.getTags()
+    const tags = await tagApi.getTags()
 
-    setTags(response.data.data.map(item => ({ label: item.name, value: item._id })))
+    const tagOptions: IOptionGroup[] = []
+
+    for (const tag of tags.data.data) {
+      for (const option of tag.children) {
+        tagOptions.push({
+          value: option._id,
+          label: option.name,
+          group: tag.name
+        })
+      }
+    }
+
+    setTags(tagOptions)
   }
+
+  const handleDescription = () => {
+    if (selectedProd) {
+      const description = selectedProd.description;
+      if (description) {
+        let descipt = description
+        descipt = descipt.replaceAll("<h1>", '<h1 class="py-2 text-heading-1 dark:text-white">');
+        descipt = descipt.replaceAll("<h2>", '<h2 class="py-2 text-heading-2 dark:text-white">');
+        descipt = descipt.replaceAll("<h3>", '<h3 class="py-2 text-heading-3 dark:text-white">');
+        descipt = descipt.replaceAll("<h4>", '<h4 class="py-2 text-heading-4 dark:text-white">');
+        descipt = descipt.replaceAll("<h5>", '<h5 class="py-2 text-heading-5 dark:text-white">');
+        descipt = descipt.replaceAll("<h6>", '<h6 class="py-2 text-heading-6 dark:text-white">');
+        descipt = descipt.replaceAll("<p>", '<p class="dark:text-white py-2">');
+        descipt = descipt.replaceAll("<ul>", '<ul class="list-disc list-inside pl-4">');
+
+        return descipt;
+      }
+    }
+    return "";
+  };
 
   useEffect(() => {
     handleGetProductNames()
@@ -386,6 +434,7 @@ const TabProductItem = () => {
                     disablePortal
                     id='product'
                     options={productNames}
+                    isOptionEqualToValue={(option, value) => option.value === value.value}
                     sx={{ width: '100%' }}
                     renderInput={params => (
                       <TextField {...params} error={invalid} helperText={error?.message} label='Sản phẩm' />
@@ -393,7 +442,10 @@ const TabProductItem = () => {
                     onChange={(e, value) => {
                       onChange(value)
                       handleGetVariationOptions()
-
+                      if (value) {
+                        handleChangeProduct(value)
+                        setSeletedProd(value)
+                      }
                       return value
                     }}
                   />
@@ -406,11 +458,13 @@ const TabProductItem = () => {
                 name={'tags'}
                 rules={{ required: { value: true, message: `Chọn thẻ` } }}
                 control={control}
-                render={({ field: { onChange }, fieldState: { error, invalid } }) => (
+                render={({ field: { onChange, value }, fieldState: { error, invalid } }) => (
                   <Autocomplete
                     disablePortal
                     multiple
+                    value={value ? value : []}
                     isOptionEqualToValue={(option, value) => option.value === value.value}
+                    groupBy={option => option.group}
                     id={'tags'}
                     options={tags}
                     sx={{ width: '100%' }}
@@ -453,6 +507,20 @@ const TabProductItem = () => {
                 />
               </Grid>
             ))}
+
+            {selectedProd && (
+              <Grid item xs={12}>
+                <FormLabel style={{ fontWeight: 500 }}>
+                  Mô tả sản phẩm
+                </FormLabel>
+                <div
+                  className="mt-8 text-paragraph-5 lg:text-paragraph-4 dark:text-white"
+                  dangerouslySetInnerHTML={{
+                    __html: handleDescription(),
+                  }}
+                ></div>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <Button variant='contained' type='submit' sx={{ marginRight: 3.5 }}>
