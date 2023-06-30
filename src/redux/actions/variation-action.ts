@@ -46,3 +46,13 @@ export const deleteOption = createAsyncThunk(
     }
   }
 )
+
+export const deleteVariation = createAsyncThunk('variations/delete', async (id: string, thunkAPI) => {
+  try {
+    const response = await variationApi.deleteVariation(id)
+
+    return response.data.data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error)
+  }
+})
