@@ -28,6 +28,10 @@ const variationApi = {
 
   deleteOption: (param: string) => {
     return axiosService.delete<IResponseSuccess<string>>(`${URL}/option/${param}`)
+  },
+
+  deleteVariation: (id: string) => {
+    return axiosService.delete<IResponseSuccess<string>>(`${URL}/${id}`)
   }
 }
 

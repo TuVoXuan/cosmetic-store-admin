@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { selectVariations } from '../../redux/reducers/variation-slide'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
-import { deleteOption, getVariations } from '../../redux/actions/variation-action'
+import { deleteOption, deleteVariation, getVariations } from '../../redux/actions/variation-action'
 import { Box } from '@mui/system'
 import { useVariation } from '../../context/variation'
 import { toast } from 'react-hot-toast'
@@ -87,7 +87,78 @@ export default function VariantTable() {
 
       toast.success('Delete option success')
     } catch (error) {
-      toast.error((error as IResponseError).error)
+      if ((error as IResponseError).error === 'ERROR_THIS_OPTION_IS_BEING_USED') {
+        toast.error(
+          `${
+            variations
+              .find(item => item.variation._id === parent)
+              ?.variationOptions.find(item => item._id === children)
+              ?.value.find(item => item.language === 'vi')?.value
+          }  đang được sử dụng.`
+        )
+      } else {
+        toast.error((error as IResponseError).error)
+      }
+    }
+  }
+
+  const handleConfirmDeleteVariation = (id: string) => () => {
+    toast.loading(
+      t => (
+        <Box>
+          <p>
+            Do want to delete{' '}
+            <span style={{ fontWeight: 700 }}>
+              {
+                variations.find(item => item.variation._id === id)?.variation.name.find(item => item.language === 'vi')
+                  ?.value
+              }
+            </span>
+            ?
+          </p>
+          <Box sx={{ display: 'flex', justifyContent: 'end', columnGap: '12px' }}>
+            <Button onClick={() => toast.dismiss(t.id)} type='button' color='error' variant='text'>
+              no
+            </Button>
+            <Button
+              onClick={() => {
+                toast.dismiss(t.id)
+                handleDeleteVariation(id)
+              }}
+              type='button'
+              color='error'
+              variant='contained'
+            >
+              Yes
+            </Button>
+          </Box>
+        </Box>
+      ),
+      {
+        id: 'warningToast',
+        style: { maxWidth: '500px' },
+        icon: <WarningRoundedIcon color='error' />
+      }
+    )
+  }
+
+  const handleDeleteVariation = async (id: string) => {
+    try {
+      await dispatch(deleteVariation(id)).unwrap()
+    } catch (error) {
+      if ((error as IResponseError).error.includes('IS_BEING_USED')) {
+        const optionId = (error as IResponseError).error.split('_')[1]
+        toast.error(
+          `${
+            variations
+              .find(item => item.variation._id === id)
+              ?.variationOptions.find(item => item._id === optionId)
+              ?.value.find(item => item.language === 'vi')?.value
+          }  đang được sử dụng.`
+        )
+      } else {
+        toast.error((error as IResponseError).error)
+      }
     }
   }
 
@@ -141,7 +212,11 @@ export default function VariantTable() {
                     <IconButton onClick={showAddOptionsForm(variation._id)} color='info' aria-label='add an alarm'>
                       <AddIcon />
                     </IconButton>
-                    <IconButton color='error' aria-label='add an alarm'>
+                    <IconButton
+                      onClick={handleConfirmDeleteVariation(variation._id)}
+                      color='error'
+                      aria-label='add an alarm'
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>

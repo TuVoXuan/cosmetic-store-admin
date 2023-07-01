@@ -46,7 +46,8 @@ export default function CreateAndBrandForm() {
     handleSubmit,
     register,
     formState: { errors },
-    setValue
+    setValue,
+    reset
   } = useForm<FormValue>({
     defaultValues: {
       name: selectedBrand ? selectedBrand.name : undefined
@@ -94,6 +95,10 @@ export default function CreateAndBrandForm() {
         error: err => (err as IResponseError).error
       })
     }
+
+    reset()
+    setLogo('/images/cards/default-img.png')
+    setLogoFile(undefined)
   }
 
   const onChangeLogo = (file: ChangeEvent) => {

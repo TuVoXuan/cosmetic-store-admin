@@ -89,13 +89,17 @@ export default function BrandTable() {
   }
 
   const handleDelete = async (id: string) => {
-    const deleteResult = dispatch(deleteBrand(id)).unwrap()
+    try {
+      await dispatch(deleteBrand(id)).unwrap()
 
-    toast.promise(deleteResult, {
-      loading: 'Đang xóa thương hiệu ...',
-      success: 'Xóa thương hiệu thành công',
-      error: 'Đã xảy ra lỗi'
-    })
+      toast.success('Xóa thương hiệu thành công')
+    } catch (error) {
+      if ((error as IResponseError).error === 'ERROR_THIS_BRAND_IS_BEING_USED') {
+        toast.error('Thương hiệu này đang được sử dụng')
+      } else {
+        toast.error((error as IResponseError).error)
+      }
+    }
   }
 
   const onSubmit = (value: FormValue) => {
@@ -112,6 +116,10 @@ export default function BrandTable() {
     reset()
     fetchBrands()
   }, [])
+
+  useEffect(() => {
+    setFilterBrands(brands)
+  }, [brands])
 
   return (
     <Grid container spacing={5}>
