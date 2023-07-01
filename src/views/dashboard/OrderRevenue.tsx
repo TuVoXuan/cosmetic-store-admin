@@ -146,7 +146,7 @@ const OrderRevenue = () => {
 
   const handleGetCategories = async () => {
     try {
-      const res = await categoryApi.getCategory()
+      const res = await categoryApi.getCategoryLeaf()
       const options: IOption[] = res.data.data.map(item => {
         let option: IOption = { value: '', label: '' }
         for (let i = 0; i < item.name.length; i++) {
@@ -238,9 +238,9 @@ const OrderRevenue = () => {
             series={
               timeType === 'month'
                 ? [
-                    { name: 'Năm nay', data: chartDataRevenue, color: theme.palette.primary.main },
-                    { name: 'Năm trước', data: chartDataRefund, color: theme.palette.warning.main }
-                  ]
+                  { name: 'Năm nay', data: chartDataRevenue, color: theme.palette.primary.main },
+                  { name: 'Năm trước', data: chartDataRefund, color: theme.palette.warning.main }
+                ]
                 : [{ name: 'Doanh thu', data: chartDataRevenue, color: theme.palette.primary.main }]
             }
           />

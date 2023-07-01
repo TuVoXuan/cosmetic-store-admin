@@ -54,7 +54,7 @@ export const getServerSideProps = async (context: any) => {
   const brands: IOption[] = resBrand.data.data.map(item => ({ value: item._id, label: item.name }))
 
   // fetch categories
-  const resCategories = await categoryApi.getCategory()
+  const resCategories = await categoryApi.getCategoryLeaf()
   const categories: IOption[] = resCategories.data.data.map(item => {
     let option: IOption = { value: '', label: '' }
     for (let i = 0; i < item.name.length; i++) {

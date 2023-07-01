@@ -41,7 +41,7 @@ export default function FilterProduct() {
 
   const handleGetCategories = async () => {
     try {
-      const res = await categoryApi.getCategory()
+      const res = await categoryApi.getCategoryLeaf()
       const options: IOption[] = res.data.data.map(item => {
         let option: IOption = { value: '', label: '' }
         for (let i = 0; i < item.name.length; i++) {
