@@ -16,7 +16,6 @@ import { selectTags } from '../../redux/reducers/tag-slice'
 
 interface FormValue {
   name: string
-  weight: string
   tagGroup: string
 }
 
@@ -35,7 +34,6 @@ export default function ProductTagForm() {
   const { control, handleSubmit, reset, setValue } = useForm<FormValue>({
     defaultValues: {
       name: '',
-      weight: '',
       tagGroup: ''
     }
   })
@@ -49,14 +47,14 @@ export default function ProductTagForm() {
           updateTag({
             id: selectedTag._id,
             name: value.name,
-            weight: parseInt(value.weight),
+            weight: selectedTag.weight ?? 1,
             parent: value.tagGroup
           })
         ).unwrap()
         setSelectedTag(undefined)
         toast.success('Cập nhập thẻ thành công')
       } else {
-        await dispatch(createTag({ name: value.name, weight: parseInt(value.weight), parent: value.tagGroup })).unwrap()
+        await dispatch(createTag({ name: value.name, weight: 1, parent: value.tagGroup })).unwrap()
         toast.success('Tạo thẻ thành công')
       }
       reset()
@@ -70,10 +68,10 @@ export default function ProductTagForm() {
   useEffect(() => {
     if (selectedTag) {
       setValue('name', selectedTag.name)
-      setValue(
-        'weight',
-        importances.find(item => item.value === selectedTag.weight.toString())?.value || importances[0].value
-      )
+      // setValue(
+      //   'weight',
+      //   importances.find(item => item.value === selectedTag.weight.toString())?.value || importances[0].value
+      // )
       setValue('tagGroup', tagGroups.find(item => item.value === selectedTag.parent)?.value || tagGroups[0].value)
     } else {
       reset()
@@ -108,7 +106,7 @@ export default function ProductTagForm() {
               />
             </Grid>
 
-            <Grid item xs={12} lg={5}>
+            {/* <Grid item xs={12} lg={5}>
               <Controller
                 name={'weight'}
                 rules={{ required: { value: true, message: `Yêu cầu chọn trọng số` } }}
@@ -133,7 +131,7 @@ export default function ProductTagForm() {
                   </FormControl>
                 )}
               />
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12} lg={5}>
               <FormControl fullWidth>

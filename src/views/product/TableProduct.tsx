@@ -137,7 +137,7 @@ const Row = (props: { row: IProductTable }) => {
 
   return (
     <Fragment>
-      <TableRow>
+      <TableRow sx={{ '&:hover .actions': { visibility: 'visible' } }}>
         <TableCell>
           <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
             {open ? <ChevronUp /> : <ChevronDown />}
@@ -156,7 +156,14 @@ const Row = (props: { row: IProductTable }) => {
           </Box>
         </TableCell>
         <TableCell align='right'>
-          <Box sx={{ display: 'flex', columnGap: 2 }}>
+          <Box
+            className='actions'
+            sx={{
+              display: 'flex',
+              columnGap: 2,
+              visibility: 'hidden'
+            }}
+          >
             <IconButton onClick={() => handleAlertDeleteProd(row._id, row.name)} aria-label='delete' color='error'>
               <DeleteIcon />
             </IconButton>
@@ -185,12 +192,12 @@ const Row = (props: { row: IProductTable }) => {
                     <TableCell>Biến thể</TableCell>
                     <TableCell>Giá tiền</TableCell>
                     <TableCell align='right'>Số lượng</TableCell>
-                    <TableCell align='right'>Hành động</TableCell>
+                    <TableCell align='right'></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.productItems.map(item => (
-                    <TableRow key={item._id}>
+                    <TableRow sx={{ '&:hover .actions-child': { visibility: 'visible' } }} key={item._id}>
                       <TableCell component='th' scope='row' sx={{ '* + *': { ml: 2 } }}>
                         {item.productConfigurations.map(variant => (
                           <Chip key={variant._id} label={variant.value} />
@@ -199,31 +206,33 @@ const Row = (props: { row: IProductTable }) => {
                       <TableCell>{item.price}</TableCell>
                       <TableCell align='right'>{item.quantity}</TableCell>
                       <TableCell align='right'>
-                        <IconButton
-                          onClick={() =>
-                            handleAlertDeleteProdItem(
-                              row._id,
-                              item._id,
-                              row.name,
-                              item.productConfigurations.map(item => item.value)
-                            )
-                          }
-                          aria-label='delete'
-                          color='error'
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                        <Link passHref href={`/product/update/${row._id}/${item._id}`}>
-                          <a>
-                            <IconButton
-                              // onClick={() => router.push(`/product/update/${row._id}/${item._id}`)}
-                              aria-label='delete'
-                              color='primary'
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </a>
-                        </Link>
+                        <Box className='actions-child' sx={{ visibility: 'hidden' }}>
+                          <IconButton
+                            onClick={() =>
+                              handleAlertDeleteProdItem(
+                                row._id,
+                                item._id,
+                                row.name,
+                                item.productConfigurations.map(item => item.value)
+                              )
+                            }
+                            aria-label='delete'
+                            color='error'
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                          <Link passHref href={`/product/update/${row._id}/${item._id}`}>
+                            <a>
+                              <IconButton
+                                // onClick={() => router.push(`/product/update/${row._id}/${item._id}`)}
+                                aria-label='delete'
+                                color='primary'
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </a>
+                          </Link>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -318,7 +327,7 @@ const TableProduct = () => {
               <TableCell align='left'>Tên</TableCell>
               <TableCell>Thương hiệu</TableCell>
               <TableCell align='center'>Phân loại</TableCell>
-              <TableCell align='center'>hành động</TableCell>
+              <TableCell align='center'></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
