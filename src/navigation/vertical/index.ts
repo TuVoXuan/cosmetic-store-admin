@@ -7,6 +7,7 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
@@ -22,6 +23,11 @@ const navigation = (): VerticalNavItemsType => {
       title: 'Sản phẩm',
       icon: Inventory2OutlinedIcon,
       path: '/product'
+    },
+    {
+      title: 'Loại sản phẩm',
+      icon: CategoryOutlinedIcon,
+      path: '/categories'
     },
     {
       title: 'Biến thể',

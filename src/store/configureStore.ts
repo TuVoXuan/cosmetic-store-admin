@@ -7,6 +7,7 @@ import tagReducer from '../redux/reducers/tag-slice'
 import userReducer from '../redux/reducers/user-slice'
 import dashboardSlice from '../redux/reducers/dashboard-slice'
 import settingSlice from '../redux/reducers/setting-slice'
+import categorySlice from '../redux/reducers/category-slice'
 
 const combineReducer = combineReducers({
   products: productReducer,
@@ -15,7 +16,8 @@ const combineReducer = combineReducers({
   tags: tagReducer,
   user: userReducer,
   dashboard: dashboardSlice,
-  setting: settingSlice
+  setting: settingSlice,
+  categories: categorySlice
 })
 
 const rootReducer: Reducer = (state: RootState, action: AnyAction) => {

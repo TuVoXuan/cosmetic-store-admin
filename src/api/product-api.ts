@@ -81,6 +81,10 @@ const productApi = {
       `${URL}/dashboard/product-item/${data.itemId}`,
       data.body
     )
+  },
+
+  checkCategoryUsed: (categoryId: string) => {
+    return axiosService.get<IResponseSuccess<boolean>>(`${URL}/check-category-used/${categoryId}`)
   }
 }
 
