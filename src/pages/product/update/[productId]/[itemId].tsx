@@ -91,8 +91,7 @@ export const getServerSideProps = async (context: any) => {
     const variationId: string = variations[i]
     const res = await variationApi.getVariationOptions(variationId)
 
-    // @typescript-eslint / no - inferrable - types
-    let variationName: string = ''
+    let variationName!: string;
     res.data.data.variation.name.forEach(item => {
       if (item.language === 'vi') {
         variationName = item.value
