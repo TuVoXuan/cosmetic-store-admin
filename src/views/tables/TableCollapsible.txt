@@ -26,6 +26,7 @@ import { removeProductItem, selectProducts } from '../../redux/reducers/product-
 import { deleteProduct, getProducts } from '../../redux/actions/product-action'
 import { useAppDispatch, useAppSelector } from '../../store/configureStore'
 import { useRouter } from 'next/router'
+import { IProductTable } from '../../types/api/product-api'
 
 const Row = (props: { row: IProductTable }) => {
   // ** Props
