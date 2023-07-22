@@ -90,6 +90,7 @@ export const getServerSideProps = async (context: any) => {
   for (let i = 0; i < variations.length; i++) {
     const variationId: string = variations[i]
     const res = await variationApi.getVariationOptions(variationId)
+    // @typescript-eslint / no - inferrable - types
     let variationName: string = ''
     res.data.data.variation.name.forEach(item => {
       if (item.language === 'vi') {
@@ -220,6 +221,7 @@ function UpdateProductItem({ optionsGroup, prodItem, productId, tags, auth }: Pr
       )
       setValue(options.variationName, defautVal)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
